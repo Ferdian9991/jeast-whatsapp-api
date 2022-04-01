@@ -22,7 +22,6 @@ exports.ws = async (events) => {
   const onload = {
     args: [
       "--no-sandbox",
-      "--incognito",
       "--disable-web-security",
       "--disable-features=IsolateOrigins,site-per-process",
       "--netifs-to-ignore=INTERFACE_TO_IGNORE",
@@ -35,7 +34,8 @@ exports.ws = async (events) => {
     headless: false,
   };
   const browser = await puppeteer.launch(onload);
-  const page = await browser.newPage();
+  const page = (await browser.pages())[0];
+  await page.setBypassCSP(true);
   page.setDefaultNavigationTimeout(0);
   if (typeof events == "function") events(page, browser);
   return {
