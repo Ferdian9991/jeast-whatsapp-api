@@ -8,9 +8,11 @@ client.on("qr_code", async (qr) => {
     qr_code_terminal.generate(qr, { small: true });
   }
 });
+
 client.on("connection", async (connection) => {
   if (connection.isConnected) {
-    await client.sendMessage({ phone: "6283854246025", message: "halo" });
+    console.log("connected");
   }
 });
+
 client.connect({ authState: "foo" });

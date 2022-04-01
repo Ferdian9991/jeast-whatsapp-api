@@ -88,6 +88,8 @@ class Jeast extends EventEmitter {
       this.emit(Events.CONNECTION, connection);
     };
 
+    logger(options.log, "connecting...");
+
     if (isAuthentication) {
       let retries = 0;
       await page.exposeFunction("qrChanged", async (qr) => {
@@ -155,6 +157,7 @@ class Jeast extends EventEmitter {
 
   async sendMessage(option = { phone, message }) {
     const endpoint = sendMessageURL(option.message, option.phone);
+    logger(true, "sending message...");
     const { page } = await this.pupPage;
 
     await page.goto(endpoint, { timeout: 0 });
