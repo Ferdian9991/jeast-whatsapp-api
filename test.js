@@ -1,3 +1,4 @@
+const qr_code_terminal = require("qrcode-terminal");
 const Jeast = require("./src/jeast");
 
 const client = new Jeast();

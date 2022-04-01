@@ -31,7 +31,7 @@ exports.ws = async (events) => {
       `--user-agent=${userAgent.userAgent}`,
     ],
     devtools: false,
-    headless: true,
+    headless: false,
   };
   const browser = await puppeteer.launch(onload);
   const page = (await browser.pages())[0];
