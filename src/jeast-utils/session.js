@@ -42,7 +42,6 @@ const setSession = async (page, sessionId) => {
     localStorage.setItem("remember-me", "true");
     // location.reload(true);
   }, session);
-  console.log(`Logged in as ${session["last-wid"]}`);
 };
 
 module.exports = {

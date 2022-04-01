@@ -16,4 +16,10 @@ client.on("connection", async (connection) => {
   }
 });
 
+client.on("message", (msg) => {
+  if (msg.body == "hallo") {
+    msg.reply("hai");
+  }
+});
+
 client.connect({ authState: "foo" });

@@ -2,8 +2,19 @@ const EventEmitter = require("events");
 const fsp = require("fs").promises;
 const { existsSync } = require("fs");
 const qr_code_terminal = require("qrcode-terminal");
+const moduleRaid = require("@pedroslopez/moduleraid/moduleraid");
 const { Events, whatsappURL, sendMessageURL } = require("./jeast-utils/config");
 const { selectors } = require("./jeast-utils/selectors");
+const { ExposeStore, LoadModule } = require("./jeast-utils/WAModule");
+const {
+  ClientInfo,
+  Message,
+  MessageMedia,
+  Location,
+  Buttons,
+  List,
+  Contact,
+} = require("./models");
 const {
   QR_CANVAS,
   QR_RETRY_BUTTON,
@@ -150,24 +161,199 @@ class Jeast extends EventEmitter {
       }
     }
 
+    await page.evaluate(ExposeStore, moduleRaid.toString());
+
+    await page.evaluate(LoadModule);
+
+    const userinfo = new ClientInfo(
+      this,
+      await page.evaluate(() => {
+        return {
+          ...window.Store.Conn.serialize(),
+        };
+      })
+    );
+    console.log(`Logged in as ${userinfo.pushname}`);
+
+    await page.exposeFunction("onAddMessageEvent", (msg) => {
+      if (msg.type === "gp2") {
+        const notification = new GroupNotification(this, msg);
+        if (msg.subtype === "add" || msg.subtype === "invite") {
+          /**
+           * Emitted when a user joins the chat via invite link or is added by an admin.
+           * @event Client#group_join
+           * @param {GroupNotification} notification GroupNotification with more information about the action
+           */
+          this.emit(Events.GROUP_JOIN, notification);
+        } else if (msg.subtype === "remove" || msg.subtype === "leave") {
+          /**
+           * Emitted when a user leaves the chat or is removed by an admin.
+           * @event Client#group_leave
+           * @param {GroupNotification} notification GroupNotification with more information about the action
+           */
+          this.emit(Events.GROUP_LEAVE, notification);
+        } else {
+          /**
+           * Emitted when group settings are updated, such as subject, description or picture.
+           * @event Client#group_update
+           * @param {GroupNotification} notification GroupNotification with more information about the action
+           */
+          this.emit(Events.GROUP_UPDATE, notification);
+        }
+        return;
+      }
+
+      const message = new Message(this, msg);
+
+      /**
+       * Emitted when a new message is created, which may include the current user's own messages.
+       * @event Client#message_create
+       * @param {Message} message The message that was created
+       */
+      this.emit(Events.MESSAGE_CREATE, message);
+
+      if (msg.id.fromMe) return;
+
+      /**
+       * Emitted when a new message is received.
+       * @event Client#message
+       * @param {Message} message The message that was received
+       */
+      this.emit(Events.MESSAGE_RECEIVED, message);
+    });
+
+    await page.evaluate(() => {
+      window.Store.Msg.on("add", (msg) => {
+        if (msg.isNewMsg) {
+          if (msg.type === "ciphertext") {
+            // defer message event until ciphertext is resolved (type changed)
+            msg.once("change:type", (_msg) =>
+              window.onAddMessageEvent(window.JWeb.getMessageModel(_msg))
+            );
+          } else {
+            window.onAddMessageEvent(window.JWeb.getMessageModel(msg));
+          }
+        }
+      });
+    });
     isConnected({
       isConnected: true,
     });
   }
 
-  async sendMessage(option = { phone, message }) {
-    const endpoint = sendMessageURL(option.message, option.phone);
-    logger(true, "sending message...");
+  /**
+   * Send a message to a specific chatId
+   * @param {string} chatId
+   * @param {string|MessageMedia|Location|Contact|Array<Contact>|Buttons|List} content
+   * @param {MessageSendOptions} [options] - Options used when sending the message
+   *
+   * @returns {Promise<Message>} Message that was just sent
+   */
+  async sendMessage(chatId, content, options = {}) {
     const { page } = await this.pupPage;
 
-    await page.goto(endpoint, { timeout: 0 });
+    let internalOptions = {
+      linkPreview: options.linkPreview === false ? undefined : true,
+      sendAudioAsVoice: options.sendAudioAsVoice,
+      sendVideoAsGif: options.sendVideoAsGif,
+      sendMediaAsSticker: options.sendMediaAsSticker,
+      sendMediaAsDocument: options.sendMediaAsDocument,
+      caption: options.caption,
+      quotedMessageId: options.quotedMessageId,
+      parseVCards: options.parseVCards === false ? false : true,
+      mentionedJidList: Array.isArray(options.mentions)
+        ? options.mentions.map((contact) => contact.id._serialized)
+        : [],
+      extraOptions: options.extra,
+    };
 
-    await page.waitForSelector(SEND_MESSAGE_BUTTON);
-    await page.waitForTimeout(2000);
-    const send = await page.$(SEND_MESSAGE_BUTTON);
+    const sendSeen =
+      typeof options.sendSeen === "undefined" ? true : options.sendSeen;
 
-    await send.click();
+    if (content instanceof MessageMedia) {
+      internalOptions.attachment = content;
+      content = "";
+    } else if (options.media instanceof MessageMedia) {
+      internalOptions.attachment = options.media;
+      internalOptions.caption = content;
+      content = "";
+    } else if (content instanceof Location) {
+      internalOptions.location = content;
+      content = "";
+    } else if (content instanceof Contact) {
+      internalOptions.contactCard = content.id._serialized;
+      content = "";
+    } else if (
+      Array.isArray(content) &&
+      content.length > 0 &&
+      content[0] instanceof Contact
+    ) {
+      internalOptions.contactCardList = content.map(
+        (contact) => contact.id._serialized
+      );
+      content = "";
+    } else if (content instanceof Buttons) {
+      if (content.type !== "chat") {
+        internalOptions.attachment = content.body;
+      }
+      internalOptions.buttons = content;
+      content = "";
+    } else if (content instanceof List) {
+      internalOptions.list = content;
+      content = "";
+    }
+
+    if (internalOptions.sendMediaAsSticker && internalOptions.attachment) {
+      internalOptions.attachment = await Util.formatToWebpSticker(
+        internalOptions.attachment,
+        {
+          name: options.stickerName,
+          author: options.stickerAuthor,
+          categories: options.stickerCategories,
+        },
+        this.pupPage
+      );
+    }
+
+    const newMessage = await page.evaluate(
+      async (chatId, message, options, sendSeen) => {
+        const chatWid = window.Store.WidFactory.createWid(chatId);
+        const chat = await window.Store.Chat.find(chatWid);
+
+        if (sendSeen) {
+          window.JWeb.sendSeen(chatId);
+        }
+
+        const msg = await window.JWeb.sendMessage(
+          chat,
+          message,
+          options,
+          sendSeen
+        );
+        return msg.serialize();
+      },
+      chatId,
+      content,
+      internalOptions,
+      sendSeen
+    );
+
+    return new Message(this, newMessage);
   }
+
+  // async sendMessage(option = { phone, message }) {
+  //   const endpoint = sendMessageURL(option.message, option.phone);
+  //   logger(true, "sending message...");
+  //   const { page } = await this.pupPage;
+
+  //   await page.goto(endpoint, { timeout: 0 });
+
+  //   await page.waitForSelector(SEND_MESSAGE_BUTTON);
+  //   await page.waitForTimeout(2000);
+  //   const send = await page.$(SEND_MESSAGE_BUTTON);
+
+  //   await send.click();
+  // }
 }
 
 module.exports = Jeast;
