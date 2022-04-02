@@ -1,18 +1,17 @@
-const qr_code_terminal = require("qrcode-terminal");
 const Jeast = require("./src/jeast");
 
 const client = new Jeast();
 
 client.on("qr_code", async (qr) => {
   if (qr) {
-    process.stdout.write("\x1Bc");
-    qr_code_terminal.generate(qr, { small: true });
+    console.log(qr);
   }
 });
 
 client.on("connection", async (connection) => {
   if (connection.isConnected) {
-    console.log("connected");
+    const chatLists = await client.searchMessages('Hai');
+    console.log(chatLists);
   }
 });
 
@@ -23,9 +22,10 @@ client.on("message", (msg) => {
 });
 
 client.connect({
+  logger: true,
+  qr_terminal: true,
   authState: {
     isAuth: true,
-    log: true,
     authType: "multidevice",
     authId: "example_account",
   },

@@ -11,4 +11,6 @@ module.exports = {
   Payment: require("./payment.jeast"),
   Buttons: require("./buttons.jeast"),
   List: require("./list.jeast.js"),
+  GroupChat: require("./group-chat.jeast"),
+  PrivateChat: require("./private-chat.jeast"),
 };

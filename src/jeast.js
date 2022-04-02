@@ -1,6 +1,6 @@
 const EventEmitter = require("events");
 const fsp = require("fs").promises;
-const { existsSync, unlinkSync, rmSync } = require("fs");
+const { existsSync } = require("fs");
 const qr_code_terminal = require("qrcode-terminal");
 const moduleRaid = require("@pedroslopez/moduleraid/moduleraid");
 const {
@@ -22,12 +22,15 @@ const {
 } = require("./jeast-models");
 const { QR_CANVAS, QR_RETRY_BUTTON, QR_CONTAINER, MAIN_SELECTOR } = selectors;
 const ContactMap = require("./jeast-tools/contact-map");
+const ChatMap = require("./jeast-tools/chat-map");
 const { ws } = require("./jeast-utils/ws");
 const { getSession, setSession } = require("./jeast-utils/session");
 const { join } = require("path");
 
 const logger = (condition, message) => {
-  condition && console.log(message);
+  if (condition) {
+    console.log(message);
+  }
 };
 
 class Jeast extends EventEmitter {
@@ -41,7 +44,7 @@ class Jeast extends EventEmitter {
    *
    * @param {Object} options Passing with options!
    * @param {Boolean} options.qr_terminal Passing with boolean type to display qr code terminal
-   * @param {Boolean} options.log Passing with boolean type to display logs
+   * @param {Boolean} options.logger Passing with boolean type to display logs
    * @param {Object} options.authState Choose auth options
    * @param {Boolean} options.authState.isAuth Required for authentication if true
    * @param {string} options.authState.authType Select your auth type legacy or multidevice
@@ -51,7 +54,7 @@ class Jeast extends EventEmitter {
   async connect(
     options = {
       qr_terminal: false,
-      log: true,
+      logger: true,
       authState: { isAuth: true, authType: "legacy", authId: "" },
     }
   ) {
@@ -63,8 +66,8 @@ class Jeast extends EventEmitter {
     }
 
     const sessionDir = join(
-      __dirname,
-      `../session/`,
+      process.cwd(),
+      `session/`,
       options.authState.authId + "_wa"
     );
 
@@ -90,6 +93,8 @@ class Jeast extends EventEmitter {
     ) {
       console.log("Session found, try to retrieve session!!");
       await setSession(page, options.authState.authId);
+    } else {
+      logger(options.logger, "Waiting for qr_code...");
     }
 
     await page.goto(whatsappURL, {
@@ -130,7 +135,7 @@ class Jeast extends EventEmitter {
       this.emit(Events.CONNECTION, connection);
     };
 
-    logger(options.log, "connecting...");
+    logger(options.logger, "connecting...");
 
     if (isAuthentication) {
       let retries = 0;
@@ -279,7 +284,7 @@ class Jeast extends EventEmitter {
         this.emit(Events.DISCONNECTED, "NAVIGATION");
         await this.destroy();
         if (existsSync(sessionDir)) {
-          rmSync(sessionDir, {
+          await fsp.rm(sessionDir, {
             recursive: true,
             force: true,
           });
@@ -416,6 +421,57 @@ class Jeast extends EventEmitter {
    */
   async destroy() {
     await this.clientBrowser.close();
+  }
+
+  /**
+   * Searches for messages
+   * @param {string} query
+   * @param {Object} [options]
+   * @param {number} [options.page]
+   * @param {number} [options.limit]
+   * @param {string} [options.chatId]
+   * @returns {Promise<Message[]>}
+   */
+  async searchMessages(query, options = {}) {
+    const messages = await this.clientPage.evaluate(
+      async (query, page, count, remote) => {
+        const { messages } = await window.Store.Msg.search(
+          query,
+          page,
+          count,
+          remote
+        );
+        return messages.map((msg) => window.JWeb.getMessageModel(msg));
+      },
+      query,
+      options.page,
+      options.limit,
+      options.chatId
+    );
+
+    return messages.map((msg) => new Message(this, msg));
+  }
+
+  /**
+   * Get all current chat instances
+   * @returns {Promise<Array<Chat>>}
+   */
+  async getChats() {
+    let chats = await this.clientPage.evaluate(async () => {
+      return await window.JWeb.getChats();
+    });
+
+    return chats.map((chat) => ChatMap.create(this, chat));
+  }
+
+  /**
+   * Returns the version of WhatsApp Web currently being run
+   * @returns {Promise<string>}
+   */
+  async getWAVersion() {
+    return await this.clientPage.evaluate(() => {
+      return window.Debug.VERSION;
+    });
   }
 }
 
