@@ -1,5 +1,5 @@
 {
-  "name": "jeast-whatsapp",
+  "name": "jeast-whatsapp-api",
   "version": "1.0.1",
   "description": "Useful tools for whatsapp",
   "main": "src/jeast.js",
