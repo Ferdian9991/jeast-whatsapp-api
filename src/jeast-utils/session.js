@@ -1,11 +1,6 @@
 const fs = require("fs");
 const { join } = require("path");
 
-if (!fs.existsSync(join(__dirname, "../../session")))
-  fs.mkdirSync(join(__dirname, "../../session"), {
-    recursive: true,
-  });
-
 const getSession = async (page, sessionId) => {
   const localStorageData = await page.evaluate(() => {
     let json = {};
