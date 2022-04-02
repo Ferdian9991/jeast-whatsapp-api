@@ -73,6 +73,10 @@ typings/
 .idea/**/tasks.xml
 .idea/dictionaries
 
+# Lock files
+package-lock.json
+yarn.lock
+
 # Sensitive or high-churn files:
 .idea/**/dataSources/
 .idea/**/dataSources.ids
