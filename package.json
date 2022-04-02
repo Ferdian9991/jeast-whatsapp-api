@@ -1,6 +1,6 @@
 {
   "name": "jeast-whatsapp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Useful tools for whatsapp",
   "main": "src/jeast.js",
   "homepage": "https://github.com/Ferdian9991/jeast-whatsapp",
@@ -8,7 +8,10 @@
     "example": "node example.js"
   },
   "keywords": [
-    "whatsapp-api"
+    "whatsapp-api",
+    "jeast-whatsapp",
+    "jeast-whatsapp api",
+    "whatsapp-web"
   ],
   "author": "Ferdian Satria Akbar <ferdisatria15@gmail.com>",
   "license": "MIT",
