@@ -8,7 +8,7 @@ const puppeteer = require("puppeteer");
  * @returns {Promise}  WS will be return a promise
  */
 
-exports.ws = async (events) => {
+exports.ws = async (events, sessionId) => {
   const userAgent = new UserAgent([
     /Safari/,
     {
@@ -19,6 +19,9 @@ exports.ws = async (events) => {
       deviceCategory: "desktop",
     },
   ]);
+
+  let userDataDir = sessionId != undefined && `./session/${sessionId}`;
+
   const onload = {
     args: [
       "--no-sandbox",
@@ -32,6 +35,7 @@ exports.ws = async (events) => {
     ],
     devtools: false,
     headless: false,
+    userDataDir,
   };
   const browser = await puppeteer.launch(onload);
   const page = (await browser.pages())[0];

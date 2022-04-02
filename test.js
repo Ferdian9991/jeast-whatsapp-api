@@ -17,9 +17,16 @@ client.on("connection", async (connection) => {
 });
 
 client.on("message", (msg) => {
-  if (msg.body == "hallo") {
-    msg.reply("hai");
+  if (msg.body == "Hello") {
+    msg.reply("Hai");
   }
 });
 
-client.connect({ authState: "foo" });
+client.connect({
+  authState: {
+    isAuth: true,
+    log: true,
+    authType: "multidevice",
+    authId: "example_account",
+  },
+});

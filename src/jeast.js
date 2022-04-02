@@ -34,7 +34,7 @@ const logger = (condition, message) => {
 class Jeast extends EventEmitter {
   constructor(pupPage) {
     super();
-    this.pupPage = ws(whatsappURL);
+    this.pupPage = null;
   }
 
   /**
@@ -42,13 +42,23 @@ class Jeast extends EventEmitter {
    * @param {Object} options Passing with options!
    * @param {Boolean} options.qr_terminal Passing with boolean type to display qr code terminal
    * @param {Boolean} options.log Passing with boolean type to display logs
+   * @param {Object} options.authState Choose auth options
+   * @param {Boolean} options.authState.isAuth Required for authentication if true
+   * @param {string} options.authState.authType Select your auth type legacy or multidevice
+   * @param {string} options.authState.authId Required if using legacy auth
    * @returns {EventEmitter}
    */
-  async connect(options = { qr_terminal: false, log: true, authState }) {
+  async connect(
+    options = {
+      qr_terminal: false,
+      log: true,
+      authState: { isAuth: true, authType: "legacy", authId: "" },
+    }
+  ) {
     const sessionDir = join(
       __dirname,
       `../session/`,
-      options.authState + ".json"
+      options.authState.authId + ".json"
     );
     if (!existsSync(sessionDir)) {
       await fsp.mkdir(join(__dirname, `../session/`), {
@@ -56,10 +66,18 @@ class Jeast extends EventEmitter {
       });
     }
 
+    this.pupPage = ws(
+      whatsappURL,
+      options.authState.authType == "multidevice" &&
+        options.authState.authId != "" &&
+        options.authState.authId
+    );
+
     const { page, browser } = await this.pupPage;
 
-    if (existsSync(sessionDir)) {
-      await setSession(page, options.authState);
+    if (existsSync(sessionDir) && options.authState.isAuth) {
+      console.log("Session found, try to retrieve session!!");
+      await setSession(page, options.authState.authId);
     }
 
     await page.goto(whatsappURL, {
@@ -157,8 +175,8 @@ class Jeast extends EventEmitter {
       isLoggedIn = (await page.$(MAIN_SELECTOR)) != null && true;
       await page.waitForTimeout(2000);
 
-      if (isLoggedIn) {
-        const storage = await getSession(page, options.authState);
+      if (isLoggedIn && options.authState.isAuth) {
+        await getSession(page, options.authState.authId);
       }
     }
 
@@ -174,6 +192,7 @@ class Jeast extends EventEmitter {
         };
       })
     );
+
     console.log(`Logged in as ${userinfo.pushname}`);
 
     await page.exposeFunction("onAddMessageEvent", (msg) => {
