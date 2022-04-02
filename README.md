@@ -5,7 +5,7 @@ A Simple whatsapp api that connects through the whatsapp web
 ## Installation
 
 ```bash
-npm i jeast-whatsapp
+npm i jeast-whatsapp-api
 ```
 
 Please note that Node v12+ is required.
