@@ -3,12 +3,7 @@ const fsp = require("fs").promises;
 const { existsSync } = require("fs");
 const qr_code_terminal = require("qrcode-terminal");
 const moduleRaid = require("@pedroslopez/moduleraid/moduleraid");
-const {
-  Events,
-  whatsappURL,
-  sendMessageURL,
-  ConnWAState,
-} = require("./jeast-utils/config");
+const { Events, whatsappURL, ConnWAState } = require("./jeast-utils/config");
 const { selectors } = require("./jeast-utils/selectors");
 const { ExposeStore, LoadModule } = require("./jeast-utils/WAModule");
 const {
@@ -19,6 +14,7 @@ const {
   Buttons,
   List,
   Contact,
+  Chat,
 } = require("./jeast-models");
 const { QR_CANVAS, QR_RETRY_BUTTON, QR_CONTAINER, MAIN_SELECTOR } = selectors;
 const ContactMap = require("./jeast-tools/contact-map");
@@ -45,6 +41,7 @@ class Jeast extends EventEmitter {
    * @param {Object} options Passing with options!
    * @param {Boolean} options.qr_terminal Passing with boolean type to display qr code terminal
    * @param {Boolean} options.logger Passing with boolean type to display logs
+   * @param {Boolean} options.headless Passing with boolean type to choose headless mode
    * @param {Object} options.authState Choose auth options
    * @param {Boolean} options.authState.isAuth Required for authentication if true
    * @param {string} options.authState.authType Select your auth type legacy or multidevice
@@ -55,9 +52,18 @@ class Jeast extends EventEmitter {
     options = {
       qr_terminal: false,
       logger: true,
+      headless: true,
       authState: { isAuth: true, authType: "legacy", authId: "" },
     }
   ) {
+    options.headless == undefined
+      ? (options.headless = true)
+      : (options.headless = options.headless);
+
+    options.logger == undefined
+      ? (options.logger = true)
+      : (options.logger = options.logger);
+
     if (typeof options.authState != "object") {
       throw new Error(`Auth state can't be null!!`);
     } else {
@@ -77,10 +83,10 @@ class Jeast extends EventEmitter {
       });
     }
 
-    const puppeteer = ws(
-      whatsappURL,
-      options.authState.isAuth && options.authState.authId
-    );
+    const puppeteer = ws({
+      sessionId: options.authState.isAuth && options.authState.authId,
+      headless: options.headless,
+    });
 
     const { page, browser } = await puppeteer;
 
@@ -102,6 +108,8 @@ class Jeast extends EventEmitter {
       timeout: 0,
       referer: "https://whatsapp.com/",
     });
+
+    logger(options.logger, "connecting...");
 
     const isAuthentication = await Promise.race([
       new Promise((resolve) => {
@@ -135,9 +143,16 @@ class Jeast extends EventEmitter {
       this.emit(Events.CONNECTION, connection);
     };
 
-    logger(options.logger, "connecting...");
-
     if (isAuthentication) {
+      if (existsSync(join(sessionDir, options.authState.authId + ".json"))) {
+        logger(options.logger, "Your account has been disconnected!!");
+        await this.destroy();
+        await fsp.rm(sessionDir, {
+          recursive: true,
+          force: true,
+        });
+        return this.connect(options);
+      }
       let retries = 0;
       await page.exposeFunction("qrChanged", async (qr) => {
         this.emit(Events.QR_RECEIVED, qr);
@@ -263,7 +278,6 @@ class Jeast extends EventEmitter {
       window.Store.Msg.on("add", (msg) => {
         if (msg.isNewMsg) {
           if (msg.type === "ciphertext") {
-            // defer message event until ciphertext is resolved (type changed)
             msg.once("change:type", (_msg) =>
               window.onAddMessageEvent(window.JWeb.getMessageModel(_msg))
             );
@@ -401,7 +415,7 @@ class Jeast extends EventEmitter {
 
   /**
    * Gets the current connection state for the client
-   * @returns {WAState}
+   * @returns {ConnWAState}
    */
   async getState() {
     return await this.clientPage.evaluate(() => {
@@ -465,13 +479,39 @@ class Jeast extends EventEmitter {
   }
 
   /**
-   * Returns the version of WhatsApp Web currently being run
+   * Returns the version of WhatsApp Web
    * @returns {Promise<string>}
    */
   async getWAVersion() {
     return await this.clientPage.evaluate(() => {
       return window.Debug.VERSION;
     });
+  }
+
+  /**
+   * Mark as seen for the Chat
+   *  @param {string} chatId
+   *  @returns {Promise<boolean>} result
+   *
+   */
+  async sendMessageSeen(chatId) {
+    const result = await this.clientPage.evaluate(async (chatId) => {
+      return await window.JWeb.sendSeen(chatId);
+    }, chatId);
+    return await result;
+  }
+
+  /**
+   * Get chat instance by ID
+   * @param {string} chatId
+   * @returns {Promise<Chat>}
+   */
+  async getChatById(chatId) {
+    let chat = await this.clientPage.evaluate(async (chatId) => {
+      return await window.JWeb.getChat(chatId);
+    }, chatId);
+
+    return ChatMap.create(this, chat);
   }
 }
 

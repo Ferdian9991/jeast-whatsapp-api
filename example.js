@@ -10,14 +10,13 @@ client.on("qr_code", async (qr) => {
 
 client.on("connection", async (connection) => {
   if (connection.isConnected) {
-    const chatLists = await client.searchMessages('Hai');
-    console.log(chatLists);
+    console.log("connected!");
   }
 });
 
-client.on("message", (msg) => {
-  if (msg.body == "Hello") {
-    msg.reply("Hai");
+client.on("message", async (message) => {
+  if (message.body == "Hello") {
+    await client.sendMessage(message.id.remote, 'Hai')
   }
 });
 
