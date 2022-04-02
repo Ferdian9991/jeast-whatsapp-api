@@ -2,7 +2,8 @@
   "name": "jeast-whatsapp",
   "version": "1.0.0",
   "description": "Useful tools for whatsapp",
-  "main": "index.js",
+  "main": "src/jeast.js",
+  "homepage": "https://github.com/UserName/package-name",
   "scripts": {
     "example": "node example.js"
   },
@@ -21,5 +22,10 @@
     "puppeteer": "^13.5.2",
     "qrcode-terminal": "^0.12.0",
     "user-agents": "^1.0.972"
-  }
+  },
+  "private": false,
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "engineStrict": true
 }
