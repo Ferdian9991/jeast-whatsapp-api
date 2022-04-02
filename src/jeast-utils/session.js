@@ -16,7 +16,7 @@ const getSession = async (page, sessionId) => {
     return json;
   });
   fs.writeFile(
-    join(__dirname, "../../session", `${sessionId}.json`),
+    join(__dirname, `../../session/${sessionId}_wa`, `${sessionId}.json`),
     JSON.stringify(localStorageData, null, 4),
     (err) => {
       if (err) console.log(err);
@@ -27,7 +27,7 @@ const getSession = async (page, sessionId) => {
 
 const setSession = async (page, sessionId) => {
   let localStorage = fs.readFileSync(
-    join(__dirname, "../../session", `${sessionId}.json`),
+    join(__dirname, `../../session/${sessionId}_wa`, `${sessionId}.json`),
     "utf8"
   );
   let session = JSON.parse(localStorage);

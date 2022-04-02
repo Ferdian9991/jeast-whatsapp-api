@@ -20,7 +20,8 @@ exports.ws = async (events, sessionId) => {
     },
   ]);
 
-  let userDataDir = sessionId != undefined && `./session/${sessionId}`;
+  let userDataDir =
+    sessionId != undefined && `./session/${sessionId}_wa/${sessionId}`;
 
   const onload = {
     args: [

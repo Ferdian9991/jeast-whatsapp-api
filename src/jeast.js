@@ -1,9 +1,14 @@
 const EventEmitter = require("events");
 const fsp = require("fs").promises;
-const { existsSync } = require("fs");
+const { existsSync, unlinkSync, rmSync } = require("fs");
 const qr_code_terminal = require("qrcode-terminal");
 const moduleRaid = require("@pedroslopez/moduleraid/moduleraid");
-const { Events, whatsappURL, sendMessageURL } = require("./jeast-utils/config");
+const {
+  Events,
+  whatsappURL,
+  sendMessageURL,
+  ConnWAState,
+} = require("./jeast-utils/config");
 const { selectors } = require("./jeast-utils/selectors");
 const { ExposeStore, LoadModule } = require("./jeast-utils/WAModule");
 const {
@@ -15,13 +20,7 @@ const {
   List,
   Contact,
 } = require("./jeast-models");
-const {
-  QR_CANVAS,
-  QR_RETRY_BUTTON,
-  QR_CONTAINER,
-  MAIN_SELECTOR,
-  SEND_MESSAGE_BUTTON,
-} = selectors;
+const { QR_CANVAS, QR_RETRY_BUTTON, QR_CONTAINER, MAIN_SELECTOR } = selectors;
 const ContactMap = require("./jeast-tools/contact-map");
 const { ws } = require("./jeast-utils/ws");
 const { getSession, setSession } = require("./jeast-utils/session");
@@ -32,9 +31,10 @@ const logger = (condition, message) => {
 };
 
 class Jeast extends EventEmitter {
-  constructor(pupPage) {
+  constructor(clientPage, clientBrowser) {
     super();
-    this.pupPage = null;
+    this.clientPage = null;
+    this.clientBrowser = null;
   }
 
   /**
@@ -55,27 +55,39 @@ class Jeast extends EventEmitter {
       authState: { isAuth: true, authType: "legacy", authId: "" },
     }
   ) {
+    if (typeof options.authState != "object") {
+      throw new Error(`Auth state can't be null!!`);
+    } else {
+      if (options.authState.authId == "")
+        throw new Error(`Auth id can't be null!!`);
+    }
+
     const sessionDir = join(
       __dirname,
       `../session/`,
-      options.authState.authId + ".json"
+      options.authState.authId + "_wa"
     );
+
     if (!existsSync(sessionDir)) {
-      await fsp.mkdir(join(__dirname, `../session/`), {
+      await fsp.mkdir(sessionDir, {
         recursive: true,
       });
     }
 
-    this.pupPage = ws(
+    const puppeteer = ws(
       whatsappURL,
-      options.authState.authType == "multidevice" &&
-        options.authState.authId != "" &&
-        options.authState.authId
+      options.authState.isAuth && options.authState.authId
     );
 
-    const { page, browser } = await this.pupPage;
+    const { page, browser } = await puppeteer;
 
-    if (existsSync(sessionDir) && options.authState.isAuth) {
+    this.clientPage = page;
+    this.clientBrowser = browser;
+
+    if (
+      existsSync(join(sessionDir, options.authState.authId + ".json")) &&
+      options.authState.isAuth
+    ) {
       console.log("Session found, try to retrieve session!!");
       await setSession(page, options.authState.authId);
     }
@@ -256,8 +268,23 @@ class Jeast extends EventEmitter {
         }
       });
     });
+
     isConnected({
       isConnected: true,
+    });
+
+    page.on("framenavigated", async () => {
+      const appState = await this.getState();
+      if (!appState || appState === ConnWAState.PAIRING) {
+        this.emit(Events.DISCONNECTED, "NAVIGATION");
+        await this.destroy();
+        if (existsSync(sessionDir)) {
+          rmSync(sessionDir, {
+            recursive: true,
+            force: true,
+          });
+        }
+      }
     });
   }
 
@@ -270,8 +297,6 @@ class Jeast extends EventEmitter {
    * @returns {Promise<Message>} Message that was just sent
    */
   async sendMessage(chatId, content, options = {}) {
-    const { page } = await this.pupPage;
-
     let internalOptions = {
       linkPreview: options.linkPreview === false ? undefined : true,
       sendAudioAsVoice: options.sendAudioAsVoice,
@@ -331,11 +356,11 @@ class Jeast extends EventEmitter {
           author: options.stickerAuthor,
           categories: options.stickerCategories,
         },
-        this.pupPage
+        this.clientPage
       );
     }
 
-    const newMessage = await page.evaluate(
+    const newMessage = await this.clientPage.evaluate(
       async (chatId, message, options, sendSeen) => {
         const chatWid = window.Store.WidFactory.createWid(chatId);
         const chat = await window.Store.Chat.find(chatWid);
@@ -362,13 +387,35 @@ class Jeast extends EventEmitter {
   }
 
   async getContacts() {
-    const { page } = await this.pupPage;
-
-    let contacts = await page.evaluate(() => {
+    let contacts = await this.clientPage.evaluate(() => {
       return window.JWeb.getContacts();
     });
 
     return contacts.map((contact) => ContactMap.create(this, contact));
+  }
+
+  /**
+   * Gets the current connection state for the client
+   * @returns {WAState}
+   */
+  async getState() {
+    return await this.clientPage.evaluate(() => {
+      if (!window.Store) return null;
+      return window.Store.AppState.state;
+    });
+  }
+
+  async logout() {
+    await this.clientPage.evaluate(() => {
+      return window.Store.AppState.logout();
+    });
+  }
+
+  /**
+   * Closes the jeast
+   */
+  async destroy() {
+    await this.clientBrowser.close();
   }
 }
 
