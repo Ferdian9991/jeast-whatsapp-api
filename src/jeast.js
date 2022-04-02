@@ -22,6 +22,7 @@ const {
   MAIN_SELECTOR,
   SEND_MESSAGE_BUTTON,
 } = selectors;
+const ContactMap = require("./jeast-tools/ContactMap");
 const { ws } = require("./jeast-utils/ws");
 const { getSession, setSession } = require("./jeast-utils/session");
 const { join } = require("path");
@@ -206,7 +207,7 @@ class Jeast extends EventEmitter {
       const message = new Message(this, msg);
 
       /**
-       * Emitted when a new message is created, which may include the current user's own messages.
+       * Emitted when a new message is created
        * @event Client#message_create
        * @param {Message} message The message that was created
        */
@@ -341,19 +342,15 @@ class Jeast extends EventEmitter {
     return new Message(this, newMessage);
   }
 
-  // async sendMessage(option = { phone, message }) {
-  //   const endpoint = sendMessageURL(option.message, option.phone);
-  //   logger(true, "sending message...");
-  //   const { page } = await this.pupPage;
+  async getContacts() {
+    const { page } = await this.pupPage;
 
-  //   await page.goto(endpoint, { timeout: 0 });
+    let contacts = await page.evaluate(() => {
+      return window.JWeb.getContacts();
+    });
 
-  //   await page.waitForSelector(SEND_MESSAGE_BUTTON);
-  //   await page.waitForTimeout(2000);
-  //   const send = await page.$(SEND_MESSAGE_BUTTON);
-
-  //   await send.click();
-  // }
+    return contacts.map((contact) => ContactMap.create(this, contact));
+  }
 }
 
 module.exports = Jeast;
