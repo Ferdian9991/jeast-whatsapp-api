@@ -4,7 +4,7 @@
   "description": "Useful tools for whatsapp",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "example": "node example.js"
   },
   "keywords": [
     "whatsapp-api"

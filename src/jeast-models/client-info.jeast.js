@@ -1,4 +1,4 @@
-const Main = require("./Main");
+const Main = require("./main.jeast");
 
 class ClientInfo extends Main {
   constructor(client, data) {

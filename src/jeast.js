@@ -14,7 +14,7 @@ const {
   Buttons,
   List,
   Contact,
-} = require("./models");
+} = require("./jeast-models");
 const {
   QR_CANVAS,
   QR_RETRY_BUTTON,
@@ -22,7 +22,7 @@ const {
   MAIN_SELECTOR,
   SEND_MESSAGE_BUTTON,
 } = selectors;
-const ContactMap = require("./jeast-tools/ContactMap");
+const ContactMap = require("./jeast-tools/contact-map");
 const { ws } = require("./jeast-utils/ws");
 const { getSession, setSession } = require("./jeast-utils/session");
 const { join } = require("path");

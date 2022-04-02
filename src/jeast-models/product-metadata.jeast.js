@@ -1,4 +1,4 @@
-const Main = require("./Main");
+const Main = require("./main.jeast");
 
 class ProductMetadata extends Main {
   constructor(client, data) {

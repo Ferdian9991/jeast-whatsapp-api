@@ -1,5 +1,5 @@
-const Main = require("./Main");
-const Product = require("./Product");
+const Main = require("./main.jeast");
+const Product = require("./product.jeast");
 
 /**
  * Represents a Order on WhatsApp

@@ -1,5 +1,5 @@
-const PrivateContact = require("../models/PrivateContact");
-const BusinessContact = require("../models/BusinessContact");
+const PrivateContact = require("../jeast-models/private-contact.jeast");
+const BusinessContact = require("../jeast-models/business-contact.jeast");
 
 class ContactMap {
   static create(client, data) {

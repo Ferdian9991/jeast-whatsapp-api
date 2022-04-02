@@ -1,8 +1,8 @@
-const Main = require("./Main");
-const MessageMedia = require("./MessageMedia");
-const Location = require("./Location");
-const Order = require("./Order");
-const Payment = require("./Payment");
+const Main = require("./main.jeast");
+const MessageMedia = require("./message-media.jeast");
+const Location = require("./location.jeast");
+const Order = require("./order.jeast");
+const Payment = require("./payment.jeast");
 const { MessageTypes } = require("../jeast-utils/config");
 
 /**

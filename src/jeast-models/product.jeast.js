@@ -1,5 +1,5 @@
-const Main = require("./Main");
-const ProductMetadata = require("./ProductMetadata");
+const Main = require("./main.jeast");
+const ProductMetadata = require("./product-metadata.jeast");
 
 /**
  * Represents a Product on WhatsAppBusiness

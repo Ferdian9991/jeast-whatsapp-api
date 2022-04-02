@@ -1,4 +1,4 @@
-const Contact = require("./Contact");
+const Contact = require("./contact.jeast");
 
 /**
  * Represents a Business Contact on WhatsApp

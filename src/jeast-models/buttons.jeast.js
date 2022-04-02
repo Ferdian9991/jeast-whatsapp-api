@@ -1,4 +1,4 @@
-const MessageMedia = require("./MessageMedia");
+const MessageMedia = require("./message-media.jeast");
 const Util = require("../jeast-utils/JeastUtils");
 
 /**
