@@ -236,7 +236,7 @@ client.ev.connection(async (connection) => {
     const video = MsgMedia.fromFilePath(
       __dirname + "/path/to/file"
     );
-    await client.sendMessage(message.id.remote, video, {
+    await client.sendMessage('receiver-number@c.us', video, {
       sendVideoAsGif: true,
     });
   }
