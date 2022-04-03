@@ -120,10 +120,18 @@ This is a function to get chat using chat id
 
 **Get Whatsapp Version**
 
-This is a function to whatsapp version
+This is a function to get whatsapp version
 
 ```js
   getWAVersion() // asynchronous function
+```
+
+**Get Contacts**
+
+This is a function to get all contacts
+
+```js
+  getContacts() // asynchronous function
 ```
 
 ## 🖼 Send as Sticker
