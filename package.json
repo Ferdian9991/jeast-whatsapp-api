@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "description": "Useful tools for whatsapp",
   "main": "./main.js",
+  "typings": "./index.d.ts",
   "homepage": "https://github.com/Ferdian9991/jeast-whatsapp-api",
   "scripts": {
     "example": "node example.js"
