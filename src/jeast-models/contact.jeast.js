@@ -192,7 +192,7 @@ class Contact extends Main {
 
   /**
    * Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
-   * @returns {Promise<WAWebJS.ChatId[]>}
+   * @returns {Promise<JWeb.ChatId[]>}
    */
   async getCommonGroups() {
     return await this.client.getCommonGroups(this.id._serialized);
