@@ -1,4 +1,3 @@
-
 <h1 align="center">
 	<img
 		width="300"
@@ -6,10 +5,13 @@
 		src="https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/public/jeast-logo.png">
 </h1>
 
-# Jeast Whatsapp API
-A Simple whatsapp api that connects through the whatsapp web
+[![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
 
-## Installation
+# Jeast Whatsapp API
+A Simple whatsapp api that connects through the whatsapp web, that is used for all needs such as sending messages, and authenticating on whatsapp via qr code.
+
+## 🚀 Installation
+Type the npm command below to install the package
 
 ```bash
 npm i jeast-whatsapp-api
@@ -17,7 +19,7 @@ npm i jeast-whatsapp-api
 
 Please note that Node v12+ is required.
 
-## Basic usage
+## ⭕ Basic usage
 
 ```js
 const Jeast = require("jeast-whatsapp-api");
@@ -52,7 +54,7 @@ client.connect({
   },
 });
 ```
-## Send Sticker
+## 🖼 Send as Sticker
 
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
@@ -67,7 +69,7 @@ await client.sendMessage(message.id.remote, sticker, {
 });
 ```
 
-## Send Document
+## 🖻 Send as Document
 
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
@@ -82,7 +84,7 @@ await client.sendMessage(message.id.remote, document, {
 });
 ```
 
-## Send Video as Gif
+## 👾 Send Video as Gif
 
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
