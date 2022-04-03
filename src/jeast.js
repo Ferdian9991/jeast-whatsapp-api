@@ -22,6 +22,7 @@ const ChatMap = require("./jeast-tools/chat-map");
 const { ws } = require("./jeast-utils/ws");
 const { getSession, setSession } = require("./jeast-utils/session");
 const { join } = require("path");
+const Util = require("./jeast-utils/JeastUtils");
 
 const logger = (condition, message) => {
   if (condition) {
@@ -42,6 +43,7 @@ class Jeast extends EventEmitter {
    * @param {Boolean} options.qr_terminal Passing with boolean type to display qr code terminal
    * @param {Boolean} options.logger Passing with boolean type to display logs
    * @param {Boolean} options.headless Passing with boolean type to choose headless mode
+   * @param {string} options.executablePath Passing with optional chrome path
    * @param {Object} options.authState Choose auth options
    * @param {Boolean} options.authState.isAuth Required for authentication if true
    * @param {string} options.authState.authType Select your auth type legacy or multidevice
@@ -51,6 +53,7 @@ class Jeast extends EventEmitter {
   async connect(
     options = {
       qr_terminal: false,
+      executablePath,
       logger: true,
       headless: true,
       authState: { isAuth: true, authType: "legacy", authId: "" },
@@ -86,6 +89,7 @@ class Jeast extends EventEmitter {
     const puppeteer = ws({
       sessionId: options.authState.isAuth && options.authState.authId,
       headless: options.headless,
+      executablePath: options.executablePath,
     });
 
     const { page, browser } = await puppeteer;
@@ -320,8 +324,8 @@ class Jeast extends EventEmitter {
       linkPreview: options.linkPreview === false ? undefined : true,
       sendAudioAsVoice: options.sendAudioAsVoice,
       sendVideoAsGif: options.sendVideoAsGif,
-      sendMediaAsSticker: options.sendMediaAsSticker,
-      sendMediaAsDocument: options.sendMediaAsDocument,
+      sendMediaAsSticker: options.sendAsSticker,
+      sendMediaAsDocument: options.sendAsDocument,
       caption: options.caption,
       quotedMessageId: options.quotedMessageId,
       parseVCards: options.parseVCards === false ? false : true,

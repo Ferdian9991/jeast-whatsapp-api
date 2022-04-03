@@ -1,7 +1,6 @@
 module.exports = {
   Main: require("./main.jeast"),
   ClientInfo: require("./client-info.jeast"),
-  ClientInfo: require("./client-info.jeast"),
   Location: require("./location.jeast"),
   Message: require("./message.jeast"),
   MessageMedia: require("./message-media.jeast"),

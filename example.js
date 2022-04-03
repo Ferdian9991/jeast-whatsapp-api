@@ -1,4 +1,4 @@
-const Jeast = require("./src/jeast");
+const { Jeast } = require("./main");
 
 const client = new Jeast();
 
@@ -16,12 +16,13 @@ client.on("connection", async (connection) => {
 
 client.on("message", async (message) => {
   if (message.body == "Hello") {
-    await client.sendMessage(message.id.remote, 'Hai')
+    await client.sendMessage(message.id.remote, "Hai");
   }
 });
 
 client.connect({
   logger: true,
+  executablePath: "/usr/bin/chromium-browser",
   qr_terminal: true,
   authState: {
     isAuth: true,

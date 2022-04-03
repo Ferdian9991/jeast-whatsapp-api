@@ -1,4 +1,11 @@
 
+<h1 align="center">
+	<img
+		width="300"
+		alt="Jeast Whatsapp"
+		src="https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/public/jeast-logo.png">
+</h1>
+
 # Jeast Whatsapp API
 A Simple whatsapp api that connects through the whatsapp web
 
@@ -10,10 +17,10 @@ npm i jeast-whatsapp-api
 
 Please note that Node v12+ is required.
 
-## Example usage
+## Basic usage
 
 ```js
-const Jeast = require("./src/jeast");
+const Jeast = require("jeast-whatsapp-api");
 
 const client = new Jeast();
 
@@ -45,6 +52,60 @@ client.connect({
   },
 });
 ```
+## Send Sticker
+
+```js
+const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
+
+const client = new Jeast()
+
+const sticker = MsgMedia.fromFilePath(
+  __dirname + "/path/to/file"
+);
+await client.sendMessage(message.id.remote, sticker, {
+  sendAsSticker: true,
+});
+```
+
+## Send Document
+
+```js
+const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
+
+const client = new Jeast()
+
+const document = MsgMedia.fromFilePath(
+  __dirname + "/path/to/file"
+);
+await client.sendMessage(message.id.remote, document, {
+  sendAsDocument: true,
+});
+```
+
+## Send Video as Gif
+
+```js
+const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
+
+const client = new Jeast()
+
+const video = MsgMedia.fromFilePath(__dirname + "/path/to/file");
+await client.sendMessage(message.id.remote, video, {
+  sendVideoAsGif: true,
+});
+
+client.connect({
+  logger: true,
+  executablePath: "/path/to/chrome", //use executablePath to send video or gif
+  qr_terminal: true,
+  authState: {
+    isAuth: true,
+    authType: "multidevice",
+    authId: "example_account",
+  },
+});
+```
+
 ## License
 
 MIT License

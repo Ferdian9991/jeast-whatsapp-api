@@ -8,8 +8,8 @@ const puppeteer = require("puppeteer");
  * @returns {Promise}  WS will be return a promise
  */
 
-exports.ws = async (options = { sessionId, headless }) => {
-  let { sessionId, headless } = options;
+exports.ws = async (options = { sessionId, headless, executablePath }) => {
+  let { sessionId, headless, executablePath } = options;
   const userAgent = new UserAgent([
     /Safari/,
     {
@@ -35,6 +35,7 @@ exports.ws = async (options = { sessionId, headless }) => {
       "--remote-debugging-address=0.0.0.0",
       `--user-agent=${userAgent.userAgent}`,
     ],
+    executablePath,
     devtools: false,
     headless,
     userDataDir,
