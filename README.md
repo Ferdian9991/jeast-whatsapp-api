@@ -108,7 +108,7 @@ client.connect({
 });
 ```
 
-## License
+## 📑 License
 
 MIT License
 
