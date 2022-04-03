@@ -55,6 +55,77 @@ client.ev.message(async (message) => {
   }
 });
 ```
+
+Jeast Whatsapp API has various functions, there are several functions that are not tied to existing events, so we will provide documentation of these functions below
+
+**Sending Message**
+
+This is a function to send a message
+
+```js
+  const options = {
+    sendAudioAsVoice: Boolean, // make it true if you use this options
+    sendVideoAsGif: Boolean, // make it true if you use this options
+    sendAsSticker: Boolean, // make it true if you use this options
+    sendAsDocument: Boolean, // make it true if you use this options
+  }
+
+  sendMessage('receiver-number@.c.us', 'message', options); // asynchronous function
+```
+
+**Get Chat List**
+
+This is a function to get all chat list
+
+```js
+  getChats(); // asynchronous function
+```
+**Logout**
+
+This is a function to logout from the whatsapp web
+
+```js
+  logout(); // asynchronous function
+```
+
+**Search Messages**
+
+This is a function to search messages with query type string
+
+```js
+  const options = {
+    page: number; // fill in how many messages the message page will retrieve
+    limit: number; // fill in how many messages are limited
+    chatId: string; // fill in the recipient's chat id
+  }
+
+  searchMessages(query = 'string', options); // asynchronous function
+```
+
+**Send Seen**
+
+This is a function to send message seen
+
+```js
+  sendMessageSeen('receiver-number@c.us') // asynchronous function
+```
+
+**Get Chat By Id**
+
+This is a function to get chat using chat id
+
+```js
+  getChatById('receiver-number@c.us') // asynchronous function
+```
+
+**Get Whatsapp Version**
+
+This is a function to whatsapp version
+
+```js
+  getWAVersion() // asynchronous function
+```
+
 ## 🖼 Send as Sticker
 
 ```js
