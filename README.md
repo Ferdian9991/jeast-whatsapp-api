@@ -22,36 +22,37 @@ Please note that Node v12+ is required.
 ## ⭕ Basic usage
 
 ```js
-const Jeast = require("jeast-whatsapp-api");
+const { Jeast } = require("jeast-whatsapp-api");
 
 const client = new Jeast();
-
-client.on("qr_code", async (qr) => {
-  if (qr) {
-    console.log(qr);
-  }
-});
-
-client.on("connection", async (connection) => {
-  if (connection.isConnected) {
-    console.log("connected!");
-  }
-});
-
-client.on("message", async (message) => {
-  if (message.body == "Hello") {
-    await client.sendMessage(message.id.remote, 'Hai')
-  }
-});
 
 client.connect({
   logger: true,
   qr_terminal: true,
+  headless: true,
   authState: {
     isAuth: true,
     authType: "multidevice",
     authId: "example_account",
   },
+});
+
+client.ev.qr(async (qr) => {
+  if (qr) {
+    console.log(qr);
+  }
+});
+
+client.ev.connection(async (connection) => {
+  if (connection.isConnected) {
+    console.log("connected!");
+  }
+});
+
+client.ev.message(async (message) => {
+  if (message.body == "Hello") {
+    await client.sendMessage(message.id.remote, "Hai");
+  }
 });
 ```
 ## 🖼 Send as Sticker
@@ -59,13 +60,34 @@ client.connect({
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
 
-const client = new Jeast()
+const client = new Jeast();
 
-const sticker = MsgMedia.fromFilePath(
-  __dirname + "/path/to/file"
-);
-await client.sendMessage(message.id.remote, sticker, {
-  sendAsSticker: true,
+client.connect({
+  logger: true,
+  qr_terminal: true,
+  headless: true,
+  authState: {
+    isAuth: true,
+    authType: "multidevice",
+    authId: "example_account",
+  },
+});
+
+client.ev.qr(async (qr) => {
+  if (qr) {
+    console.log(qr);
+  }
+});
+
+client.ev.connection(async (connection) => {
+  if (connection.isConnected) {
+    const sticker = MsgMedia.fromFilePath(
+      __dirname + "/path/to/file"
+    );
+    await client.sendMessage('receiver-number@c.us', sticker, {
+      sendAsSticker: true,
+    });
+  }
 });
 ```
 
@@ -74,13 +96,34 @@ await client.sendMessage(message.id.remote, sticker, {
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
 
-const client = new Jeast()
+const client = new Jeast();
 
-const document = MsgMedia.fromFilePath(
-  __dirname + "/path/to/file"
-);
-await client.sendMessage(message.id.remote, document, {
-  sendAsDocument: true,
+client.connect({
+  logger: true,
+  qr_terminal: true,
+  headless: true,
+  authState: {
+    isAuth: true,
+    authType: "multidevice",
+    authId: "example_account",
+  },
+});
+
+client.ev.qr(async (qr) => {
+  if (qr) {
+    console.log(qr);
+  }
+});
+
+client.ev.connection(async (connection) => {
+  if (connection.isConnected) {
+    const document = MsgMedia.fromFilePath(
+      __dirname + "/path/to/file"
+    );
+    await client.sendMessage('receiver-number@c.us', document, {
+      sendAsDocument: true,
+    });
+  }
 });
 ```
 
@@ -89,22 +132,35 @@ await client.sendMessage(message.id.remote, document, {
 ```js
 const { Jeast, MsgMedia } = require("jeast-whatsapp-api");
 
-const client = new Jeast()
-
-const video = MsgMedia.fromFilePath(__dirname + "/path/to/file");
-await client.sendMessage(message.id.remote, video, {
-  sendVideoAsGif: true,
-});
+const client = new Jeast();
 
 client.connect({
   logger: true,
   executablePath: "/path/to/chrome", //use executablePath to send video or gif
   qr_terminal: true,
+  headless: true,
   authState: {
     isAuth: true,
     authType: "multidevice",
     authId: "example_account",
   },
+});
+
+client.ev.qr(async (qr) => {
+  if (qr) {
+    console.log(qr);
+  }
+});
+
+client.ev.connection(async (connection) => {
+  if (connection.isConnected) {
+    const video = MsgMedia.fromFilePath(
+      __dirname + "/path/to/file"
+    );
+    await client.sendMessage(message.id.remote, video, {
+      sendVideoAsGif: true,
+    });
+  }
 });
 ```
 

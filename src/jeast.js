@@ -35,6 +35,40 @@ class Jeast extends EventEmitter {
     super();
     this.clientPage = null;
     this.clientBrowser = null;
+
+    this.ev = {
+      /**
+       * Events Emitter
+       * @param {Function} callback QR will passed with callbacck events
+       * @returns {EventEmitter} QR will return the events that has been assigned with parameter
+       */
+      qr: (callback) => {
+        this.on(Events.QR_RECEIVED, async (qr) => {
+          callback(qr);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Connection will passed with callbacck events
+       * @returns {EventEmitter} Connection will return the events that has been assigned with parameter
+       */
+      connection: (callback) => {
+        this.on(Events.CONNECTION, async (connection) => {
+          callback(connection);
+        });
+      },
+      /**
+       * Events Emitter
+       * @param {Function} callback Message will passed with callbacck events
+       * @returns {EventEmitter} Message will return the events that has been assigned with parameter
+       */
+      message: (callback) => {
+        this.on(Events.MESSAGE_RECEIVED, async (connection) => {
+          callback(connection);
+        });
+      },
+    };
   }
 
   /**

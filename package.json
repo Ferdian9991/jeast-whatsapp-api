@@ -7,6 +7,10 @@
   "scripts": {
     "example": "node example.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ferdian9991/jeast-whatsapp-api.git"
+  },
   "keywords": [
     "whatsapp-api",
     "jeast-whatsapp",
