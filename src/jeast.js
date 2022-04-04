@@ -13,6 +13,7 @@ const {
   Location,
   Buttons,
   List,
+  GroupNotification,
   Contact,
   Chat,
   Call,
@@ -124,6 +125,41 @@ class Jeast extends EventEmitter {
         this.on(Events.MESSAGE_ACK, async (ack) => {
           callback(ack);
         });
+      },
+
+      group: {
+        /**
+         * Events Emitter
+         * @param {Function} callback Group join action will passed with callbacck events
+         * @returns {EventEmitter} Group join action return the events that has been assigned with parameter
+         */
+        join: (callback) => {
+          this.on(Events.GROUP_JOIN, async (join) => {
+            callback(join);
+          });
+        },
+
+        /**
+         * Events Emitter
+         * @param {Function} callback Group leave action will passed with callbacck events
+         * @returns {EventEmitter} Group leave action return the events that has been assigned with parameter
+         */
+        leave: (callback) => {
+          this.on(Events.GROUP_LEAVE, async (leave) => {
+            callback(leave);
+          });
+        },
+
+        /**
+         * Events Emitter
+         * @param {Function} callback Group update action will passed with callbacck events
+         * @returns {EventEmitter} Group update action return the events that has been assigned with parameter
+         */
+        update: (callback) => {
+          this.on(Events.GROUP_UPDATE, async (update) => {
+            callback(update);
+          });
+        },
       },
     };
   }
@@ -870,6 +906,24 @@ class Jeast extends EventEmitter {
     await this.clientPage.evaluate(async (status) => {
       return await window.Store.StatusUtils.setMyStatus(status);
     }, status);
+  }
+
+  /**
+   * Marks the client as online
+   */
+  async sendOnlineStatus() {
+    return await this.clientPage.evaluate(() => {
+      return window.Store.PresenceStatus.sendPresenceAvailable();
+    });
+  }
+
+  /**
+   * Marks the client as unavailable
+   */
+  async sendOfflineStatus() {
+    return await this.clientPage.evaluate(() => {
+      return window.Store.PresenceStatus.sendPresenceUnavailable();
+    });
   }
 }
 

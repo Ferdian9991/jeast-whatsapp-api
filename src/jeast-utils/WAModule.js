@@ -58,7 +58,7 @@ exports.ExposeStore = (moduleRaidStr) => {
   window.Store.Wap = window.mR.findModule("queryLinkPreview")[0].default;
   window.Store.WidFactory = window.mR.findModule("createWid")[0];
   window.Store.ProfilePic = window.mR.findModule("profilePicResync")[0];
-  window.Store.PresenceUtils = window.mR.findModule("sendPresenceAvailable")[0];
+  window.Store.PresenceStatus = window.mR.findModule("sendPresenceAvailable")[0];
   window.Store.ChatState = window.mR.findModule("sendChatStateComposing")[0];
   window.Store.GroupParticipants = window.mR.findModule(
     "sendPromoteParticipants"

@@ -16,9 +16,11 @@ exports.Events = {
   MESSAGE_ACK: "message_ack",
   UPLOADED_MEDIA: "uploaded_media",
   QR_RECEIVED: "qr_code",
+  GROUP_LEAVE: "grp_leave",
+  GROUP_INVITATION_JOIN: "grp_join",
+  GROUP_UPDATE: "grp_update",
   DISCONNECTED: "disconnected",
   STATE_CHANGED: "change_state",
-  BATTERY_CHANGED: "change_battery",
   INCOMING_CALL: "incoming_call",
 };
 

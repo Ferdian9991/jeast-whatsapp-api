@@ -21,14 +21,13 @@ client.ev.qr(async (qr) => {
 
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
+    await client.sendOfflineStatus();
     console.log("connected!");
   }
 });
 
 client.ev.message(async (message) => {
   if (message.body == "Hello") {
-    await client.createNewGroup("Test", [
-      await client.getContactById(message.id.remote),
-    ]);
+    await client.sendOnlineStatus();
   }
 });

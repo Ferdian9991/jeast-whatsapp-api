@@ -8,9 +8,11 @@
 [![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
 
 # Jeast Whatsapp API
+
 A Simple whatsapp api that connects through the whatsapp web, that is used for all needs such as sending messages, and authenticating on whatsapp via qr code.
 
 ## 🚀 Installation
+
 Type the npm command below to install the package
 
 ```bash
@@ -63,17 +65,20 @@ Jeast Whatsapp API has various functions, there are several functions that are n
 This is a some event listener that return a callback
 
 ```js
-  const { Jeast } = require("jeast-whatsapp-api");
+const { Jeast } = require("jeast-whatsapp-api");
 
-  const client = new Jeast();
+const client = new Jeast();
 
-  client.ev.qr(callback); //Event listener to get or print qr code
-  client.ev.connection(callback); //Event listener that which will be called when connected or authenticated
-  client.ev.message(callback); //Event listener that which will be called when some peoples send message
-  client.ev.revokeMe(callback); //Event listener that which will be called when some peoples revoke to you
-  client.ev.revokeAll(callback); //Event listener that which will be called when revoke all related to you
-  client.ev.uploadMedia(callback); //Event listener that will be called if you are sending a message
-  client.ev.incomingCall(callback) //Event listener will be called when someone calls you with whatsapp
+client.ev.qr(callback); //Event listener to get or print qr code
+client.ev.connection(callback); //Event listener that which will be called when connected or authenticated
+client.ev.message(callback); //Event listener that which will be called when some peoples send message
+client.ev.revokeMe(callback); //Event listener that which will be called when some peoples revoke to you
+client.ev.revokeAll(callback); //Event listener that which will be called when revoke all related to you
+client.ev.uploadMedia(callback); //Event listener that will be called if you are sending a message
+client.ev.incomingCall(callback); //Event listener will be called when someone calls you with whatsapp
+client.ev.group.join(callback); //Event listener will be called when someone invite you on group
+client.ev.group.leave(callback); //Event listener will be called when someone remove you from group
+client.ev.group.update(callback); //Event listener will be called when someone update same group as you
 ```
 
 **Sending Message**
@@ -81,14 +86,14 @@ This is a some event listener that return a callback
 This is a function to send a message
 
 ```js
-  const options = {
-    sendAudioAsVoice: Boolean, // make it true if you use this options
-    sendVideoAsGif: Boolean, // make it true if you use this options
-    sendAsSticker: Boolean, // make it true if you use this options
-    sendAsDocument: Boolean, // make it true if you use this options
-  }
+const options = {
+  sendAudioAsVoice: Boolean, // make it true if you use this options
+  sendVideoAsGif: Boolean, // make it true if you use this options
+  sendAsSticker: Boolean, // make it true if you use this options
+  sendAsDocument: Boolean, // make it true if you use this options
+};
 
-  sendMessage('receiver-number@.c.us', 'message', options); // asynchronous function
+sendMessage("receiver-number@.c.us", "message", options); // asynchronous function
 ```
 
 **Get Chat List**
@@ -96,14 +101,15 @@ This is a function to send a message
 This is a function to get all chat list
 
 ```js
-  getChats(); // asynchronous function
+getChats(); // asynchronous function
 ```
+
 **Logout**
 
 This is a function to logout from the whatsapp web
 
 ```js
-  logout(); // asynchronous function
+logout(); // asynchronous function
 ```
 
 **Search Messages**
@@ -125,7 +131,7 @@ This is a function to search messages with query type string
 This is a function to send message seen
 
 ```js
-  sendMessageSeen('receiver-number@c.us') // asynchronous function
+sendMessageSeen("receiver-number@c.us"); // asynchronous function
 ```
 
 **Get Chat By Id**
@@ -133,7 +139,7 @@ This is a function to send message seen
 This is a function to get chat using chat id
 
 ```js
-  getChatById('receiver-number@c.us') // asynchronous function
+getChatById("receiver-number@c.us"); // asynchronous function
 ```
 
 **Get Phone Country Code**
@@ -141,7 +147,7 @@ This is a function to get chat using chat id
 This is a function to get chat using chat id
 
 ```js
-  getPhoneCountry('phone-number') // asynchronous function
+getPhoneCountry("phone-number"); // asynchronous function
 ```
 
 **Create New Group**
@@ -149,7 +155,7 @@ This is a function to get chat using chat id
 This is a function to create new group and add some participants
 
 ```js
-  createNewGroup("Test", ["List of participant number id"]); // asynchronous function
+createNewGroup("Test", ["List of participant number id"]); // asynchronous function
 ```
 
 **Get Whatsapp Version**
@@ -157,7 +163,7 @@ This is a function to create new group and add some participants
 This is a function to get whatsapp version
 
 ```js
-  getWAVersion() // asynchronous function
+getWAVersion(); // asynchronous function
 ```
 
 **Get Contacts**
@@ -165,7 +171,7 @@ This is a function to get whatsapp version
 This is a function to get all contacts
 
 ```js
-  getContacts() // asynchronous function
+getContacts(); // asynchronous function
 ```
 
 ## 🖼 Send as Sticker
@@ -194,10 +200,8 @@ client.ev.qr(async (qr) => {
 
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
-    const sticker = MsgMedia.fromFilePath(
-      __dirname + "/path/to/file"
-    );
-    await client.sendMessage('receiver-number@c.us', sticker, {
+    const sticker = MsgMedia.fromFilePath(__dirname + "/path/to/file");
+    await client.sendMessage("receiver-number@c.us", sticker, {
       sendAsSticker: true,
     });
   }
@@ -230,10 +234,8 @@ client.ev.qr(async (qr) => {
 
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
-    const document = MsgMedia.fromFilePath(
-      __dirname + "/path/to/file"
-    );
-    await client.sendMessage('receiver-number@c.us', document, {
+    const document = MsgMedia.fromFilePath(__dirname + "/path/to/file");
+    await client.sendMessage("receiver-number@c.us", document, {
       sendAsDocument: true,
     });
   }
@@ -267,10 +269,8 @@ client.ev.qr(async (qr) => {
 
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
-    const video = MsgMedia.fromFilePath(
-      __dirname + "/path/to/file"
-    );
-    await client.sendMessage('receiver-number@c.us', video, {
+    const video = MsgMedia.fromFilePath(__dirname + "/path/to/file");
+    await client.sendMessage("receiver-number@c.us", video, {
       sendVideoAsGif: true,
     });
   }
