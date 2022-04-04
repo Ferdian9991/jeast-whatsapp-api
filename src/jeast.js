@@ -115,9 +115,10 @@ class Jeast extends EventEmitter {
     );
 
     if (!existsSync(sessionDir)) {
-      await fsp.mkdir(sessionDir, {
-        recursive: true,
-      });
+      if (options.authState.isAuth)
+        await fsp.mkdir(sessionDir, {
+          recursive: true,
+        });
     }
 
     const puppeteer = ws({
@@ -135,7 +136,7 @@ class Jeast extends EventEmitter {
       existsSync(join(sessionDir, options.authState.authId + ".json")) &&
       options.authState.isAuth
     ) {
-      console.log("Session found, try to retrieve session!!");
+      logger(options.logger, "Session found, try to retrieve session!!");
       await setSession(page, options.authState.authId);
     } else {
       logger(options.logger, "Waiting for qr_code...");
@@ -263,7 +264,7 @@ class Jeast extends EventEmitter {
       })
     );
 
-    console.log(`Logged in as ${userinfo.pushname}`);
+    logger(options.logger, `Logged in as ${userinfo.pushname}`);
 
     await page.exposeFunction("onAddMessageEvent", (msg) => {
       if (msg.type === "gp2") {
@@ -550,6 +551,34 @@ class Jeast extends EventEmitter {
     }, chatId);
 
     return ChatMap.create(this, chat);
+  }
+
+  async getPhoneId(number) {
+    if (!number.endsWith("@c.us")) {
+      number += "@c.us";
+    }
+
+    return await this.clientPage.evaluate(async (number) => {
+      const result = await window.Store.QueryExist(number);
+      if (!result || result.wid === undefined) return null;
+      return result.wid;
+    }, number);
+  }
+
+  /**
+   * Get the formatted number.
+   * @param {string} number Number or ID
+   * @returns {Promise<string>}
+   */
+  async getFormattedPhone(number) {
+    if (!number.endsWith("@s.whatsapp.net"))
+      number = number.replace("c.us", "s.whatsapp.net");
+    if (!number.includes("@s.whatsapp.net"))
+      number = `${number}@s.whatsapp.net`;
+
+    return await this.clientPage.evaluate(async (numberId) => {
+      return window.Store.NumberInfo.formattedPhoneNumber(numberId);
+    }, number);
   }
 }
 

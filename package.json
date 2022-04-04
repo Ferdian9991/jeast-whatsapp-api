@@ -5,6 +5,7 @@
   "main": "./main.js",
   "homepage": "https://github.com/Ferdian9991/jeast-whatsapp-api",
   "scripts": {
+    "test": "mocha tests --recursive --timeout 7000",
     "example": "node example.js"
   },
   "repository": {
@@ -30,11 +31,18 @@
     "path": "^0.12.7",
     "puppeteer": "^13.5.2",
     "qrcode-terminal": "^0.12.0",
+    "sinon": "^13.0.1",
     "user-agents": "^1.0.972"
   },
   "private": false,
   "engines": {
     "node": ">=12.0.0"
   },
-  "engineStrict": true
+  "engineStrict": true,
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^9.2.2",
+    "nodemon": "^2.0.15"
+  }
 }

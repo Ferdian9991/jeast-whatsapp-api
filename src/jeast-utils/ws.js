@@ -22,7 +22,7 @@ exports.ws = async (options = { sessionId, headless, executablePath }) => {
   ]);
 
   let userDataDir =
-    sessionId != undefined && `./session/${sessionId}_wa/${sessionId}`;
+    sessionId && `./session/${sessionId}_wa/${sessionId}`;
 
   const onload = {
     args: [
