@@ -13,4 +13,5 @@ module.exports = {
   GroupChat: require("./group-chat.jeast"),
   PrivateChat: require("./private-chat.jeast"),
   Chat: require("./chat.jeast"),
+  Call: require("./call.jeast"),
 };

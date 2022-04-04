@@ -15,6 +15,7 @@ const {
   List,
   Contact,
   Chat,
+  Call,
 } = require("./jeast-models");
 const { QR_CANVAS, QR_RETRY_BUTTON, QR_CONTAINER, MAIN_SELECTOR } = selectors;
 const ContactMap = require("./jeast-tools/contact-map");
@@ -100,6 +101,28 @@ class Jeast extends EventEmitter {
       uploadMedia: (callback) => {
         this.on(Events.UPLOADED_MEDIA, async (uploadMedia) => {
           callback(uploadMedia);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Incoming call event will passed with callbacck events
+       * @returns {EventEmitter} Incoming call return the events that has been assigned with parameter
+       */
+      incomingCall: (callback) => {
+        this.on(Events.INCOMING_CALL, async (call) => {
+          callback(call);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Message Ack message will passed with callbacck events
+       * @returns {EventEmitter} Message will return the events that has been assigned with parameter
+       */
+      ackMessage: (callback) => {
+        this.on(Events.MESSAGE_ACK, async (ack) => {
+          callback(ack);
         });
       },
     };
@@ -309,7 +332,7 @@ class Jeast extends EventEmitter {
            * @event Client#group_join
            * @param {GroupNotification} notification GroupNotification with more information about the action
            */
-          this.emit(Events.GROUP_JOIN, notification);
+          this.emit(Events.GROUP_INVITATION_JOIN, notification);
         } else if (msg.subtype === "remove" || msg.subtype === "leave") {
           /**
            * Emitted when a user leaves the chat or is removed by an admin.
@@ -410,6 +433,24 @@ class Jeast extends EventEmitter {
       this.emit(Events.UPLOADED_MEDIA, message);
     });
 
+    await page.exposeFunction("onIncomingCall", (call) => {
+      /**
+       * Emitted when a call is received
+       * @event Client#incoming_call
+       * @param {object} call
+       * @param {number} call.id - Call id
+       * @param {string} call.peerJid - Who called
+       * @param {boolean} call.isVideo - if is video
+       * @param {boolean} call.isGroup - if is group
+       * @param {boolean} call.canHandleLocally - if we can handle in waweb
+       * @param {boolean} call.outgoing - if is outgoing
+       * @param {boolean} call.webClientShouldHandle - If Waweb should handle
+       * @param {object} call.participants - Participants
+       */
+      const callPayload = new Call(this, call);
+      this.emit(Events.INCOMING_CALL, callPayload);
+    });
+
     await page.evaluate(() => {
       window.Store.Msg.on("change", (msg) => {
         window.onChangeMessageEvent(window.JWeb.getMessageModel(msg));
@@ -427,6 +468,9 @@ class Jeast extends EventEmitter {
       window.Store.Msg.on("remove", (msg) => {
         if (msg.isNewMsg)
           window.onRemoveMessageEvent(window.JWeb.getMessageModel(msg));
+      });
+      window.Store.Call.on("add", (call) => {
+        window.onIncomingCall(call);
       });
       window.Store.Msg.on("add", (msg) => {
         if (msg.isNewMsg) {
@@ -773,6 +817,59 @@ class Jeast extends EventEmitter {
     return await this.clientPage.evaluate(async (numberId) => {
       return window.Store.NumberInfo.formattedPhoneNumber(numberId);
     }, number);
+  }
+
+  /**
+   * Returns an object with information about the invite code's group
+   * @param {string} invitationCode
+   * @returns {Promise<object>} Invite information
+   */
+  async invitationInfo(invitationCode) {
+    return await this.clientPage.evaluate((invitationCode) => {
+      return window.Store.InviteInfo.sendQueryGroupInvite(invitationCode);
+    }, invitationCode);
+  }
+
+  /**
+   * Accepts an invitation to join a group
+   * @param {string} invitationCode Invitation code
+   * @returns {Promise<string>} Id of the joined Chat
+   */
+  async acceptInvite(invitationCode) {
+    const chatId = await this.clientPage.evaluate(async (invitationCode) => {
+      return await window.Store.Invite.sendJoinGroupViaInvite(invitationCode);
+    }, invitationCode);
+
+    return chatId._serialized;
+  }
+
+  /**
+   * Accepts a private invitation to join a group
+   * @param {object} inviteInfo Invite V4 Info
+   * @returns {Promise<Object>}
+   */
+  async acceptGroupInvitationV4(inviteInfo) {
+    if (!inviteInfo.invitationCode) throw "Invalid invite code!!";
+    if (inviteInfo.invitationCodeExp == 0) throw "Invitation code expired!!";
+    return this.clientPage.evaluate(async (inviteInfo) => {
+      let { groupId, fromId, invitationCode, invitationCodeExp } = inviteInfo;
+      return await window.Store.JoinInviteV4.sendJoinGroupViaInviteV4(
+        invitationCode,
+        String(invitationCodeExp),
+        groupId,
+        fromId
+      );
+    }, inviteInfo);
+  }
+
+  /**
+   * Sets the current user's status info
+   * @param {string} status New status info
+   */
+  async setStatusInfo(status) {
+    await this.clientPage.evaluate(async (status) => {
+      return await window.Store.StatusUtils.setMyStatus(status);
+    }, status);
   }
 }
 

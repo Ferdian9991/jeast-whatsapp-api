@@ -73,6 +73,7 @@ This is a some event listener that return a callback
   client.ev.revokeMe(callback); //Event listener that which will be called when some peoples revoke to you
   client.ev.revokeAll(callback); //Event listener that which will be called when revoke all related to you
   client.ev.uploadMedia(callback); //Event listener that will be called if you are sending a message
+  client.ev.incomingCall(callback) //Event listener will be called when someone calls you with whatsapp
 ```
 
 **Sending Message**
