@@ -58,6 +58,23 @@ client.ev.message(async (message) => {
 
 Jeast Whatsapp API has various functions, there are several functions that are not tied to existing events, so we will provide documentation of these functions below
 
+**Events Listeners**
+
+This is a some event listener that return a callback
+
+```js
+  const { Jeast } = require("jeast-whatsapp-api");
+
+  const client = new Jeast();
+
+  client.ev.qr(callback); //Event listener to get or print qr code
+  client.ev.connection(callback); //Event listener that which will be called when connected or authenticated
+  client.ev.message(callback); //Event listener that which will be called when some peoples send message
+  client.ev.revokeMe(callback); //Event listener that which will be called when some peoples revoke to you
+  client.ev.revokeAll(callback); //Event listener that which will be called when revoke all related to you
+  client.ev.uploadMedia(callback); //Event listener that will be called if you are sending a message
+```
+
 **Sending Message**
 
 This is a function to send a message
@@ -116,6 +133,22 @@ This is a function to get chat using chat id
 
 ```js
   getChatById('receiver-number@c.us') // asynchronous function
+```
+
+**Get Phone Country Code**
+
+This is a function to get chat using chat id
+
+```js
+  getPhoneCountry('phone-number') // asynchronous function
+```
+
+**Create New Group**
+
+This is a function to create new group and add some participants
+
+```js
+  createNewGroup("Test", ["List of participant number id"]); // asynchronous function
 ```
 
 **Get Whatsapp Version**

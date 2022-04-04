@@ -27,6 +27,8 @@ client.ev.connection(async (connection) => {
 
 client.ev.message(async (message) => {
   if (message.body == "Hello") {
-    await client.sendMessage(message.id.remote, "Hai");
+    await client.createNewGroup("Test", [
+      await client.getContactById(message.id.remote),
+    ]);
   }
 });

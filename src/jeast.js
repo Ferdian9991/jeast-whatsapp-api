@@ -558,12 +558,30 @@ class Jeast extends EventEmitter {
     return new Message(this, newMessage);
   }
 
+  /**
+   * Get all contacts
+   * @returns {Promise<Array<Contact>>}
+   */
   async getContacts() {
     let contacts = await this.clientPage.evaluate(() => {
       return window.JWeb.getContacts();
     });
 
     return contacts.map((contact) => ContactMap.create(this, contact));
+  }
+
+  /**
+   * Get contact by ID
+   * @param {string} contactId
+   * @returns {Promise<Contact>}
+   */
+
+  async getContactById(contactId) {
+    let contact = await this.clientPage.evaluate((contactId) => {
+      return window.JWeb.getContact(contactId);
+    }, contactId);
+
+    return ContactMap.create(this, contact);
   }
 
   /**
@@ -677,6 +695,68 @@ class Jeast extends EventEmitter {
       if (!result || result.wid === undefined) return null;
       return result.wid;
     }, number);
+  }
+
+  /**
+   * Get the country code.
+   * @param {string} number Number or ID
+   * @returns {Promise<string>}
+   */
+  async getPhoneCountry(number) {
+    number = number.replace(" ", "").replace("+", "").replace("@c.us", "");
+
+    return await this.clientPage.evaluate(async (numberId) => {
+      return window.Store.NumberInfo.findCC(numberId);
+    }, number);
+  }
+
+  /**
+   * Create a new group
+   * @param {string} name group title
+   * @param {Array<Contact|string>} participants an array of Contacts or contact IDs to add to the group
+   * @returns {Object} createNewGroup
+   * @returns {string} createNewGroup.gid - ID for the group that was just created
+   * @returns {Object.<string,string>} createNewGroup.missingParticipants - participants that were not added to the group.
+   */
+  async createNewGroup(name, participants) {
+    if (!Array.isArray(participants) || participants.length == 0) {
+      throw "You need to add at least one other participant to the group";
+    }
+
+    if (participants.every((contact) => contact instanceof Contact)) {
+      participants = participants.map((contact) => contact.id._serialized);
+    }
+
+    const createRes = await this.clientPage.evaluate(
+      async (name, participantIds) => {
+        const participantWIDs = participantIds.map((participant) =>
+          window.Store.WidFactory.createWid(participant)
+        );
+        const id = window.Store.MsgKey.newId();
+        const res = await window.Store.GroupUtils.sendCreateGroup(
+          name,
+          participantWIDs,
+          undefined,
+          id
+        );
+        return res;
+      },
+      name,
+      participants
+    );
+
+    const missingParticipants = createRes.participants.reduce(
+      (missing, contact) => {
+        const id = Object.keys(contact)[0];
+        const statusCode = contact[id].code;
+        if (statusCode != 200)
+          return Object.assign(missing, { [id]: statusCode });
+        return missing;
+      },
+      {}
+    );
+
+    return { gid: createRes.gid, missingParticipants };
   }
 
   /**
