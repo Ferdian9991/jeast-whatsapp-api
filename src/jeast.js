@@ -58,14 +58,48 @@ class Jeast extends EventEmitter {
           callback(connection);
         });
       },
+
       /**
        * Events Emitter
        * @param {Function} callback Message will passed with callbacck events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       message: (callback) => {
-        this.on(Events.MESSAGE_RECEIVED, async (connection) => {
-          callback(connection);
+        this.on(Events.MESSAGE_RECEIVED, async (message) => {
+          callback(message);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Revoke me message will passed with callbacck events
+       * @returns {EventEmitter} Message will return the events that has been assigned with parameter
+       */
+      revokeMe: (callback) => {
+        this.on(Events.REVOKE_MESSAGE_ME, async (revoked_me) => {
+          callback(revoked_me);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Revoke all message will passed with callbacck events
+       * @returns {EventEmitter} Message will return the events that has been assigned with parameter
+       */
+      revokeAll: (callback) => {
+        this.on(Events.REVOKE_MESSAGE_EVERYONE, async (revoked_all) => {
+          callback(revoked_all);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback Upload media message will passed with callbacck events
+       * @returns {EventEmitter} Message will return the events that has been assigned with parameter
+       */
+      uploadMedia: (callback) => {
+        this.on(Events.UPLOADED_MEDIA, async (uploadMedia) => {
+          callback(uploadMedia);
         });
       },
     };
@@ -313,7 +347,87 @@ class Jeast extends EventEmitter {
       this.emit(Events.MESSAGE_RECEIVED, message);
     });
 
+    let last_message;
+
+    await page.exposeFunction("onChangeMessageTypeEvent", (msg) => {
+      if (msg.type === "revoked") {
+        const message = new Message(this, msg);
+        let revoked_msg;
+        if (last_message && msg.id.id === last_message.id.id) {
+          revoked_msg = new Message(this, last_message);
+        }
+
+        /**
+         * Emitted when a message is deleted for everyone in the chat.
+         * @event Client#message_revoke_everyone
+         * @param {Message} message The message that was revoked, in its current state. It will not contain the original message's data.
+         * @param {?Message} revoked_msg The message that was revoked, before it was revoked. It will contain the message's original data.
+         * Note that due to the way this data is captured, it may be possible that this param will be undefined.
+         */
+        this.emit(Events.REVOKE_MESSAGE_EVERYONE, message, revoked_msg);
+      }
+    });
+
+    await page.exposeFunction("onChangeMessageEvent", (msg) => {
+      if (msg.type !== "revoked") {
+        last_message = msg;
+      }
+    });
+
+    await page.exposeFunction("onRemoveMessageEvent", (msg) => {
+      if (!msg.isNewMsg) return;
+
+      const message = new Message(this, msg);
+
+      /**
+       * Emitted when a message is deleted by the current user.
+       * @event Client#message_revoke_me
+       * @param {Message} message The message that was revoked
+       */
+      this.emit(Events.REVOKE_MESSAGE_ME, message);
+    });
+
+    await page.exposeFunction("onMessageAckEvent", (msg, ack) => {
+      const message = new Message(this, msg);
+
+      /**
+       * Emitted when an ack event occurrs on message type.
+       * @event Client#message_ack
+       * @param {Message} message The message that was affected
+       * @param {MessageAck} ack The new ACK value
+       */
+      this.emit(Events.MESSAGE_ACK, message, ack);
+    });
+
+    await page.exposeFunction("onMessageMediaUploadedEvent", (msg) => {
+      const message = new Message(this, msg);
+
+      /**
+       * Emitted when media has been uploaded for a message sent by the client.
+       * @event Client#uploaded_media
+       * @param {Message} message The message with media that was uploaded
+       */
+      this.emit(Events.UPLOADED_MEDIA, message);
+    });
+
     await page.evaluate(() => {
+      window.Store.Msg.on("change", (msg) => {
+        window.onChangeMessageEvent(window.JWeb.getMessageModel(msg));
+      });
+      window.Store.Msg.on("change:type", (msg) => {
+        window.onChangeMessageTypeEvent(window.JWeb.getMessageModel(msg));
+      });
+      window.Store.Msg.on("change:ack", (msg, ack) => {
+        window.onMessageAckEvent(window.JWeb.getMessageModel(msg), ack);
+      });
+      window.Store.Msg.on("change:isUnsentMedia", (msg, unsent) => {
+        if (msg.id.fromMe && !unsent)
+          window.onMessageMediaUploadedEvent(window.JWeb.getMessageModel(msg));
+      });
+      window.Store.Msg.on("remove", (msg) => {
+        if (msg.isNewMsg)
+          window.onRemoveMessageEvent(window.JWeb.getMessageModel(msg));
+      });
       window.Store.Msg.on("add", (msg) => {
         if (msg.isNewMsg) {
           if (msg.type === "ciphertext") {
