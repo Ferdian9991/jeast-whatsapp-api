@@ -22,7 +22,6 @@ client.ev.qr(async (qr) => {
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
     await client.sendOfflineStatus();
-    console.log("connected!");
   }
 });
 

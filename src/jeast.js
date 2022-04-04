@@ -925,6 +925,25 @@ class Jeast extends EventEmitter {
       return window.Store.PresenceStatus.sendPresenceUnavailable();
     });
   }
+
+  /**
+   * Returns the contact ID's
+   * @param {string} contactId user's ID
+   * @returns {Promise<string>}
+   */
+  async getPictUrl(contactId) {
+    const profilePic = await this.clientPage.evaluate(async (contactId) => {
+      try {
+        const chatWid = window.Store.WidFactory.createWid(contactId);
+        return await window.Store.ProfilePic.profilePicFind(chatWid);
+      } catch (err) {
+        if (err.name === "ServerStatusCodeError") return undefined;
+        throw err;
+      }
+    }, contactId);
+
+    return profilePic ? profilePic.eurl : undefined;
+  }
 }
 
 module.exports = Jeast;
