@@ -161,6 +161,17 @@ class Jeast extends EventEmitter {
           });
         },
       },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback State update action will passed with callbacck events
+       * @returns {EventEmitter} State update action return the events that has been assigned with parameter
+       */
+      changeState: (callback) => {
+        this.on(Events.STATE_CHANGED, async (state) => {
+          callback(state);
+        });
+      },
     };
   }
 
@@ -487,6 +498,42 @@ class Jeast extends EventEmitter {
       this.emit(Events.INCOMING_CALL, callPayload);
     });
 
+    await page.exposeFunction("onAppStateChangedEvent", (state) => {
+      /**
+       * Emitted when the connection state changes
+       * @event Client#change_state
+       * @param {ConnWAState} state the new connection state
+       */
+      this.emit(Events.STATE_CHANGED, state);
+
+      const STATES = [
+        ConnWAState.CONNECTED,
+        ConnWAState.OPENING,
+        ConnWAState.PAIRING,
+        ConnWAState.TIMEOUT,
+      ];
+
+      if (this.options.takeoverOnConflict) {
+        STATES.push(ConnWAState.CONFLICT);
+
+        if (state === ConnWAState.CONFLICT) {
+          setTimeout(() => {
+            this.clientPage.evaluate(() => window.Store.AppState.takeover());
+          }, this.options.takeoverTimeoutMs);
+        }
+      }
+
+      if (!STATES.includes(state)) {
+        /**
+         * Emitted when the client has been disconnected
+         * @event Client#disconnected
+         * @param {ConnWAState} reason Navigation reason that caused the disconnect
+         */
+        this.emit(Events.DISCONNECTED, state);
+        this.destroy();
+      }
+    });
+
     await page.evaluate(() => {
       window.Store.Msg.on("change", (msg) => {
         window.onChangeMessageEvent(window.JWeb.getMessageModel(msg));
@@ -504,6 +551,9 @@ class Jeast extends EventEmitter {
       window.Store.Msg.on("remove", (msg) => {
         if (msg.isNewMsg)
           window.onRemoveMessageEvent(window.JWeb.getMessageModel(msg));
+      });
+      window.Store.AppState.on("change:state", (_AppState, state) => {
+        window.onAppStateChangedEvent(state);
       });
       window.Store.Call.on("add", (call) => {
         window.onIncomingCall(call);
