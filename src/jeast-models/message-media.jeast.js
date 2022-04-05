@@ -92,7 +92,7 @@ class MessageMedia {
     }
 
     const res = options.client
-      ? await options.client.pupPage.evaluate(
+      ? await options.client.clientPage.evaluate(
           fetchData,
           url,
           options.reqOptions

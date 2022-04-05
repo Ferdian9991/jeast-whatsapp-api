@@ -99,7 +99,7 @@ class Chat extends Main {
    * @returns {Promise<Boolean>} result
    */
   async clearMessages() {
-    return this.client.pupPage.evaluate((chatId) => {
+    return this.client.clientPage.evaluate((chatId) => {
       return window.JWeb.sendClearChat(chatId);
     }, this.id._serialized);
   }
@@ -109,7 +109,7 @@ class Chat extends Main {
    * @returns {Promise<Boolean>} result
    */
   async delete() {
-    return this.client.pupPage.evaluate((chatId) => {
+    return this.client.clientPage.evaluate((chatId) => {
       return window.JWeb.sendDeleteChat(chatId);
     }, this.id._serialized);
   }
@@ -173,7 +173,7 @@ class Chat extends Main {
    * @returns {Promise<Array<Message>>}
    */
   async fetchMessages(searchOptions) {
-    let messages = await this.client.pupPage.evaluate(
+    let messages = await this.client.clientPage.evaluate(
       async (chatId, searchOptions) => {
         const msgFilter = (m) => !m.isNotification; // dont include notification messages
 
@@ -206,7 +206,7 @@ class Chat extends Main {
    * Simulate typing in chat. This will last for 25 seconds.
    */
   async sendStateTyping() {
-    return this.client.pupPage.evaluate((chatId) => {
+    return this.client.clientPage.evaluate((chatId) => {
       window.JWeb.sendChatstate("typing", chatId);
       return true;
     }, this.id._serialized);
@@ -216,7 +216,7 @@ class Chat extends Main {
    * Simulate recording audio in chat. This will last for 25 seconds.
    */
   async sendStateRecording() {
-    return this.client.pupPage.evaluate((chatId) => {
+    return this.client.clientPage.evaluate((chatId) => {
       window.JWeb.sendChatstate("recording", chatId);
       return true;
     }, this.id._serialized);
@@ -226,7 +226,7 @@ class Chat extends Main {
    * Stops typing or recording in chat immediately.
    */
   async clearState() {
-    return this.client.pupPage.evaluate((chatId) => {
+    return this.client.clientPage.evaluate((chatId) => {
       window.JWeb.sendChatstate("stop", chatId);
       return true;
     }, this.id._serialized);

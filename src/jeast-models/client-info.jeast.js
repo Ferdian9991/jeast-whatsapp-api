@@ -55,7 +55,7 @@ class ClientInfo extends Main {
    * @deprecated
    */
   async getBatteryStatus() {
-    return await this.client.pupPage.evaluate(() => {
+    return await this.client.clientPage.evaluate(() => {
       const { battery, plugged } = window.Store.Conn;
       return { battery, plugged };
     });

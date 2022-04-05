@@ -152,7 +152,7 @@ class Contact extends Main {
   async block() {
     if (this.isGroup) return false;
 
-    await this.client.pupPage.evaluate(async (contactId) => {
+    await this.client.clientPage.evaluate(async (contactId) => {
       const contact = window.Store.Contact.get(contactId);
       await window.Store.BlockContact.blockContact(contact);
     }, this.id._serialized);
@@ -167,7 +167,7 @@ class Contact extends Main {
   async unblock() {
     if (this.isGroup) return false;
 
-    await this.client.pupPage.evaluate(async (contactId) => {
+    await this.client.clientPage.evaluate(async (contactId) => {
       const contact = window.Store.Contact.get(contactId);
       await window.Store.BlockContact.unblockContact(contact);
     }, this.id._serialized);
@@ -180,7 +180,7 @@ class Contact extends Main {
    * @returns {Promise<?string>}
    */
   async getAbout() {
-    const about = await this.client.pupPage.evaluate(async (contactId) => {
+    const about = await this.client.clientPage.evaluate(async (contactId) => {
       const wid = window.Store.WidFactory.createWid(contactId);
       return window.Store.StatusUtils.getStatus(wid);
     }, this.id._serialized);

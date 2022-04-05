@@ -279,7 +279,7 @@ class Message extends Main {
    * @returns {Promise<Message>}
    */
   async reload() {
-    const newData = await this.client.pupPage.evaluate((msgId) => {
+    const newData = await this.client.clientPage.evaluate((msgId) => {
       const msg = window.Store.Msg.get(msgId);
       if (!msg) return null;
       return window.JWeb.getMessageModel(msg);
@@ -332,7 +332,7 @@ class Message extends Main {
   async getQuotedMessage() {
     if (!this.hasQuotedMsg) return undefined;
 
-    const quotedMsg = await this.client.pupPage.evaluate((msgId) => {
+    const quotedMsg = await this.client.clientPage.evaluate((msgId) => {
       let msg = window.Store.Msg.get(msgId);
       return msg.quotedMsgObj().serialize();
     }, this.id._serialized);
@@ -380,7 +380,7 @@ class Message extends Main {
   async forward(chat) {
     const chatId = typeof chat === "string" ? chat : chat.id._serialized;
 
-    await this.client.pupPage.evaluate(
+    await this.client.clientPage.evaluate(
       async (msgId, chatId) => {
         let msg = window.Store.Msg.get(msgId);
         let chat = window.Store.Chat.get(chatId);
@@ -401,7 +401,7 @@ class Message extends Main {
       return undefined;
     }
 
-    const result = await this.client.pupPage.evaluate(async (msgId) => {
+    const result = await this.client.clientPage.evaluate(async (msgId) => {
       const msg = window.Store.Msg.get(msgId);
 
       if (msg.mediaData.mediaStage != "RESOLVED") {
@@ -454,7 +454,7 @@ class Message extends Main {
    * @param {?boolean} everyone If true and the message is sent by the current user, will delete it for everyone in the chat.
    */
   async delete(everyone) {
-    await this.client.pupPage.evaluate(
+    await this.client.clientPage.evaluate(
       (msgId, everyone) => {
         let msg = window.Store.Msg.get(msgId);
 
@@ -475,7 +475,7 @@ class Message extends Main {
    * Stars this message
    */
   async star() {
-    await this.client.pupPage.evaluate((msgId) => {
+    await this.client.clientPage.evaluate((msgId) => {
       let msg = window.Store.Msg.get(msgId);
 
       if (msg.canStar()) {
@@ -488,7 +488,7 @@ class Message extends Main {
    * Unstars this message
    */
   async unstar() {
-    await this.client.pupPage.evaluate((msgId) => {
+    await this.client.clientPage.evaluate((msgId) => {
       let msg = window.Store.Msg.get(msgId);
 
       if (msg.canStar()) {
@@ -513,7 +513,7 @@ class Message extends Main {
    * @returns {Promise<?MessageInfo>}
    */
   async getInfo() {
-    const info = await this.client.pupPage.evaluate(async (msgId) => {
+    const info = await this.client.clientPage.evaluate(async (msgId) => {
       const msg = window.Store.Msg.get(msgId);
       if (!msg) return null;
 
@@ -529,7 +529,7 @@ class Message extends Main {
    */
   async getOrder() {
     if (this.type === MessageTypes.ORDER) {
-      const result = await this.client.pupPage.evaluate(
+      const result = await this.client.clientPage.evaluate(
         (orderId, token, chatId) => {
           return window.JWeb.getOrderDetail(orderId, token, chatId);
         },
@@ -548,7 +548,7 @@ class Message extends Main {
    */
   async getPayment() {
     if (this.type === MessageTypes.PAYMENT) {
-      const msg = await this.client.pupPage.evaluate(async (msgId) => {
+      const msg = await this.client.clientPage.evaluate(async (msgId) => {
         const msg = window.Store.Msg.get(msgId);
         if (!msg) return null;
         return msg.serialize();
