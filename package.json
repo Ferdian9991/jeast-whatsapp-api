@@ -27,6 +27,7 @@
     "events": "^3.3.0",
     "fluent-ffmpeg": "^2.1.2",
     "mime": "^3.0.0",
+    "node-fetch": "2",
     "node-webpmux": "^3.1.1",
     "path": "^0.12.7",
     "puppeteer": "^13.5.2",

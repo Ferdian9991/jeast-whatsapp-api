@@ -100,7 +100,7 @@ class Chat extends Main {
    */
   async clearMessages() {
     return this.client.pupPage.evaluate((chatId) => {
-      return window.WWebJS.sendClearChat(chatId);
+      return window.JWeb.sendClearChat(chatId);
     }, this.id._serialized);
   }
 
@@ -110,7 +110,7 @@ class Chat extends Main {
    */
   async delete() {
     return this.client.pupPage.evaluate((chatId) => {
-      return window.WWebJS.sendDeleteChat(chatId);
+      return window.JWeb.sendDeleteChat(chatId);
     }, this.id._serialized);
   }
 
@@ -193,7 +193,7 @@ class Chat extends Main {
           }
         }
 
-        return msgs.map((m) => window.WWebJS.getMessageModel(m));
+        return msgs.map((m) => window.JWeb.getMessageModel(m));
       },
       this.id._serialized,
       searchOptions
@@ -207,7 +207,7 @@ class Chat extends Main {
    */
   async sendStateTyping() {
     return this.client.pupPage.evaluate((chatId) => {
-      window.WWebJS.sendChatstate("typing", chatId);
+      window.JWeb.sendChatstate("typing", chatId);
       return true;
     }, this.id._serialized);
   }
@@ -217,7 +217,7 @@ class Chat extends Main {
    */
   async sendStateRecording() {
     return this.client.pupPage.evaluate((chatId) => {
-      window.WWebJS.sendChatstate("recording", chatId);
+      window.JWeb.sendChatstate("recording", chatId);
       return true;
     }, this.id._serialized);
   }
@@ -227,7 +227,7 @@ class Chat extends Main {
    */
   async clearState() {
     return this.client.pupPage.evaluate((chatId) => {
-      window.WWebJS.sendChatstate("stop", chatId);
+      window.JWeb.sendChatstate("stop", chatId);
       return true;
     }, this.id._serialized);
   }

@@ -944,6 +944,82 @@ class Jeast extends EventEmitter {
 
     return profilePic ? profilePic.eurl : undefined;
   }
+
+  /**
+   * Pins the Chat By Id
+   * @returns {Promise<boolean>} New pin state
+   */
+  async pinChatById(chatId) {
+    return this.clientPage.evaluate(async (chatId) => {
+      let chat = window.Store.Chat.get(chatId);
+      if (chat.pin) {
+        return true;
+      }
+      const MAX_PIN_COUNT = 3;
+      if (window.Store.Chat.models.length > MAX_PIN_COUNT) {
+        let maxPinned = window.Store.Chat.models[MAX_PIN_COUNT - 1].pin;
+        if (maxPinned) {
+          return false;
+        }
+      }
+      await window.Store.Cmd.pinChat(chat, true);
+      return true;
+    }, chatId);
+  }
+
+  /**
+   * Unpins the Chat
+   * @returns {Promise<boolean>} New Unpin state
+   */
+  async unpinChatById(chatId) {
+    return this.clientPage.evaluate(async (chatId) => {
+      let chat = window.Store.Chat.get(chatId);
+      if (!chat.pin) {
+        return false;
+      }
+      await window.Store.Cmd.pinChat(chat, false);
+      return false;
+    }, chatId);
+  }
+
+  /**
+   * Mutes this chat forever, unless a date is specified
+   * @param {string} chatId ID of the chat that will be muted
+   * @param {?Date} unmuteDate Date when the chat will be unmuted, leave as is to mute forever
+   */
+  async muteChat(chatId, unmuteDate) {
+    unmuteDate = unmuteDate ? unmuteDate.getTime() / 1000 : -1;
+    await this.clientPage.evaluate(
+      async (chatId, timestamp) => {
+        let chat = await window.Store.Chat.get(chatId);
+        await chat.mute.mute(timestamp, !0);
+      },
+      chatId,
+      unmuteDate || -1
+    );
+  }
+
+  /**
+   * Unmutes the Chat
+   * @param {string} chatId ID of the chat that will be unmuted
+   */
+  async unmuteChat(chatId) {
+    await this.clientPage.evaluate(async (chatId) => {
+      let chat = await window.Store.Chat.get(chatId);
+      await window.Store.Cmd.muteChat(chat, false);
+    }, chatId);
+  }
+
+  /**
+   * Mark the Chat as unread
+   * @param {string} chatId ID of the chat that will be marked as unread
+   */
+  async markChatAsUnread(chatId) {
+    await this.clientPage.evaluate(async (chatId) => {
+      let chat = await window.Store.Chat.get(chatId);
+      await window.Store.Cmd.markChatUnread(chat, true);
+    }, chatId);
+  }
 }
 
 module.exports = Jeast;

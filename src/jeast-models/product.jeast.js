@@ -51,7 +51,7 @@ class Product extends Main {
   async getData() {
     if (this.data === null) {
       let result = await this.client.pupPage.evaluate((productId) => {
-        return window.WWebJS.getProductMetadata(productId);
+        return window.JWeb.getProductMetadata(productId);
       }, this.id);
       if (!result) {
         this.data = undefined;

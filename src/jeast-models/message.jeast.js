@@ -282,7 +282,7 @@ class Message extends Main {
     const newData = await this.client.pupPage.evaluate((msgId) => {
       const msg = window.Store.Msg.get(msgId);
       if (!msg) return null;
-      return window.WWebJS.getMessageModel(msg);
+      return window.JWeb.getMessageModel(msg);
     }, this.id._serialized);
 
     if (!newData) return null;
@@ -432,7 +432,7 @@ class Message extends Main {
             signal: new AbortController().signal,
           });
 
-        const data = window.WWebJS.arrayBufferToBase64(decryptedMedia);
+        const data = window.JWeb.arrayBufferToBase64(decryptedMedia);
 
         return {
           data,
@@ -531,7 +531,7 @@ class Message extends Main {
     if (this.type === MessageTypes.ORDER) {
       const result = await this.client.pupPage.evaluate(
         (orderId, token, chatId) => {
-          return window.WWebJS.getOrderDetail(orderId, token, chatId);
+          return window.JWeb.getOrderDetail(orderId, token, chatId);
         },
         this.orderId,
         this.token,
