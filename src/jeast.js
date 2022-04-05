@@ -599,7 +599,7 @@ class Jeast extends EventEmitter {
    * @returns {Promise<Message>} Message that was just sent
    */
   async sendMessage(chatId, content, options = {}) {
-    let internalOptions = {
+    let msgOptions = {
       linkPreview: options.linkPreview === false ? undefined : true,
       sendAudioAsVoice: options.sendAudioAsVoice,
       sendVideoAsGif: options.sendVideoAsGif,
@@ -618,41 +618,41 @@ class Jeast extends EventEmitter {
       typeof options.sendSeen === "undefined" ? true : options.sendSeen;
 
     if (content instanceof MessageMedia) {
-      internalOptions.attachment = content;
+      msgOptions.attachment = content;
       content = "";
     } else if (options.media instanceof MessageMedia) {
-      internalOptions.attachment = options.media;
-      internalOptions.caption = content;
+      msgOptions.attachment = options.media;
+      msgOptions.caption = content;
       content = "";
     } else if (content instanceof Location) {
-      internalOptions.location = content;
+      msgOptions.location = content;
       content = "";
     } else if (content instanceof Contact) {
-      internalOptions.contactCard = content.id._serialized;
+      msgOptions.contactCard = content.id._serialized;
       content = "";
     } else if (
       Array.isArray(content) &&
       content.length > 0 &&
       content[0] instanceof Contact
     ) {
-      internalOptions.contactCardList = content.map(
+      msgOptions.contactCardList = content.map(
         (contact) => contact.id._serialized
       );
       content = "";
     } else if (content instanceof Buttons) {
       if (content.type !== "chat") {
-        internalOptions.attachment = content.body;
+        msgOptions.attachment = content.body;
       }
-      internalOptions.buttons = content;
+      msgOptions.buttons = content;
       content = "";
     } else if (content instanceof List) {
-      internalOptions.list = content;
+      msgOptions.list = content;
       content = "";
     }
 
-    if (internalOptions.sendMediaAsSticker && internalOptions.attachment) {
-      internalOptions.attachment = await Util.formatToWebpSticker(
-        internalOptions.attachment,
+    if (msgOptions.sendMediaAsSticker && msgOptions.attachment) {
+      msgOptions.attachment = await Util.formatToWebpSticker(
+        msgOptions.attachment,
         {
           name: options.stickerName,
           author: options.stickerAuthor,
@@ -681,7 +681,7 @@ class Jeast extends EventEmitter {
       },
       chatId,
       content,
-      internalOptions,
+      msgOptions,
       sendSeen
     );
 

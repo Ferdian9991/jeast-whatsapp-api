@@ -72,7 +72,7 @@ class List {
             throw "[LT04] Row without title";
           }
           return {
-            rowId: row.id ? row.id : Util.generateHash(6),
+            rowId: row.id ? row.id : Util.hashed(6),
             title: row.title,
             description: row.description ? row.description : "",
           };

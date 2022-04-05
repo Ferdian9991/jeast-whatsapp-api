@@ -17,7 +17,7 @@ class JeastUtils {
     );
   }
 
-  static generateHash(length) {
+  static hashed(length) {
     var result = "";
     var characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -157,7 +157,7 @@ class JeastUtils {
 
     if (metadata.name || metadata.author) {
       const img = new webp.Image();
-      const hash = this.generateHash(32);
+      const hash = this.hashed(32);
       const stickerPackId = hash;
       const packname = metadata.name;
       const author = metadata.author;

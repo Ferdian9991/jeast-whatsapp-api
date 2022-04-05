@@ -317,7 +317,7 @@ exports.LoadModule = () => {
 
     const file = window.JWeb.mediaInfoToFile(mediaInfo);
     let filehash = await window.JWeb.getFileHash(file);
-    let mediaKey = await window.JWeb.generateHash(32);
+    let mediaKey = await window.JWeb.hashed(32);
 
     const controller = new AbortController();
     const uploadedInfo = await window.Store.UploadUtils.encryptAndUpload({
@@ -537,7 +537,7 @@ exports.LoadModule = () => {
     return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
   };
 
-  window.JWeb.generateHash = async (length) => {
+  window.JWeb.hashed = async (length) => {
     var result = "";
     var characters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
