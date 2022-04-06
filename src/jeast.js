@@ -7,6 +7,7 @@ const { Events, whatsappURL, ConnWAState } = require("./jeast-utils/config");
 const { selectors } = require("./jeast-utils/selectors");
 const { ExposeStore, LoadModule } = require("./jeast-utils/WAModule");
 const {
+  Label,
   ClientInfo,
   Message,
   MessageMedia,
@@ -686,6 +687,64 @@ class Jeast extends EventEmitter {
     );
 
     return new Message(this, newMessage);
+  }
+
+  /**
+   * Get current Labels
+   * @returns {Promise<Array<Label>>}
+   */
+  async getLabels() {
+    const labels = await this.clientPage.evaluate(async () => {
+      return window.JWeb.getLabels();
+    });
+
+    return labels.map((data) => new Label(this, data));
+  }
+
+  /**
+   * Get Label instance by ID
+   * @param {string} labelId
+   * @returns {Promise<Label>}
+   */
+  async getLabelById(labelId) {
+    const label = await this.clientPage.evaluate(async (labelId) => {
+      return window.JWeb.getLabel(labelId);
+    }, labelId);
+
+    return new Label(this, label);
+  }
+
+  /**
+   * Get all Chats for a specific Label
+   * @param {string} labelId
+   * @returns {Promise<Array<Chat>>}
+   */
+  async getChatsByLabel(labelId) {
+    const ids = await this.clientPage.evaluate(async (labelId) => {
+      const label = window.Store.Label.get(labelId);
+      const labels = label.labelItemCollection.models;
+      return labels.reduce((result, i) => {
+        if (i.parentType === "Chat") {
+          result.push(i.parentId);
+        }
+        return result;
+      }, []);
+    }, labelId);
+
+    return Promise.all(ids.map((id) => this.getChatById(id)));
+  }
+
+  /**
+   * Gets all blocked contacts by host account
+   * @returns {Promise<Array<Contact>>}
+   */
+  async getBlocked() {
+    const blocked = await this.clientPage.evaluate(() => {
+      let ids = window.Store.Blocklist.models.map((a) => a.id._serialized);
+      return Promise.all(ids.map((id) => window.JWeb.getContact(id)));
+    });
+
+    return blocked.map((contact) => ContactMap.create(this.client, contact));
   }
 
   /**

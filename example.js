@@ -53,6 +53,14 @@ client.ev.message(async (message) => {
     case "unpin":
       await client.unpinChatById(message.id.remote);
       break;
+    case "label":
+      const label = await client.getLabels();
+      console.log(label);
+      break;
+    case "blocked":
+      const blockContacts = await client.getBlocked();
+      console.log(blockContacts);
+      break;
     default:
       await client.sendMessage(message.id.remote, "Hi!, can i help you?");
   }

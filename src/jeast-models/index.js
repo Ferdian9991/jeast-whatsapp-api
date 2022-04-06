@@ -3,6 +3,7 @@ module.exports = {
   ClientInfo: require("./client-info.jeast"),
   Location: require("./location.jeast"),
   Message: require("./message.jeast"),
+  Label: require("./label.jeast"),
   MessageMedia: require("./message-media.jeast"),
   Order: require("./order.jeast"),
   Product: require("./product.jeast"),
