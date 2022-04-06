@@ -26,24 +26,34 @@ client.ev.connection(async (connection) => {
 });
 
 client.ev.message(async (message) => {
-  if (message.body == "sticker") {
-    const sticker = MsgMedia.fromFilePath(__dirname + "/public/jeast-logo.png");
-    await client.sendMessage(message.id.remote, sticker, {
-      sendAsSticker: true,
-    });
-  } else if (message.body == "doc") {
-    const doc = MsgMedia.fromFilePath(__dirname + "/public/jeast-logo.png");
-    await client.sendMessage(message.id.remote, doc, {
-      sendAsDocument: true,
-    });
-  } else if (message.body == "mp3") {
-    const mp = MsgMedia.fromFilePath(__dirname + "/public/v.mp3");
-    await client.sendMessage(message.id.remote, mp, {
-      sendAudioAsVoice: true,
-    });
-  } else if ("pin") {
-    await client.pinChatById(message.id.remote);
-  } else if ("unpin") {
-    await client.unpinChatById(message.id.remote);
+  switch (message.body) {
+    case "sticker":
+      const sticker = MsgMedia.fromFilePath(
+        __dirname + "/public/jeast-logo.png"
+      );
+      await client.sendMessage(message.id.remote, sticker, {
+        sendAsSticker: true,
+      });
+      break;
+    case "doc":
+      const doc = MsgMedia.fromFilePath(__dirname + "/public/jeast-logo.png");
+      await client.sendMessage(message.id.remote, doc, {
+        sendAsDocument: true,
+      });
+      break;
+    case "mp3":
+      const mp = MsgMedia.fromFilePath(__dirname + "/public/v.mp3");
+      await client.sendMessage(message.id.remote, mp, {
+        sendAudioAsVoice: true,
+      });
+      break;
+    case "pin":
+      await client.pinChatById(message.id.remote);
+      break;
+    case "unpin":
+      await client.unpinChatById(message.id.remote);
+      break;
+    default:
+      await client.sendMessage(message.id.remote, "Hi!, can i help you?");
   }
 });
