@@ -19,6 +19,12 @@ Type the npm command below to install the package
 npm i jeast-whatsapp-api
 ```
 
+or
+
+```bash
+yarn add jeast-whatsapp-api
+```
+
 Please note that Node v12+ is required.
 
 ## ⭕ Basic usage
@@ -28,29 +34,32 @@ const { Jeast } = require("jeast-whatsapp-api");
 
 const client = new Jeast();
 
+//Make connection state for get qr code and save session!
 client.connect({
   logger: true,
   qr_terminal: true,
   headless: true,
   authState: {
     isAuth: true,
-    authType: "multidevice",
     authId: "example_account",
   },
 });
 
+//Event listener for get QR code!
 client.ev.qr(async (qr) => {
   if (qr) {
     console.log(qr);
   }
 });
 
+//Event listener that which be called if authenticated!
 client.ev.connection(async (connection) => {
   if (connection.isConnected) {
     console.log("connected!");
   }
 });
 
+//Event listeners that which be called if someone sending message for you!
 client.ev.message(async (message) => {
   if (message.body == "Hello") {
     await client.sendMessage(message.id.remote, "Hai");
@@ -77,6 +86,8 @@ client.ev.connection(callback);
 //Event listener that which will be called when connected or authenticated
 client.ev.message(callback);
 //Event listener that which will be called when some peoples send message
+client.ev.newMessage(callback);
+//Event listener will be called if new message has been created
 client.ev.revokeMe(callback);
 //Event listener that which will be called when some peoples revoke to you
 client.ev.revokeAll(callback);
@@ -148,7 +159,6 @@ This is a function to mark as unread chat
 markChatAsUnread("receiver-number@c.us"); // asynchronous function
 ```
 
-
 **Logout**
 
 This is a function to logout from the whatsapp web
@@ -211,12 +221,52 @@ This is a function to get whatsapp version
 getWAVersion(); // asynchronous function
 ```
 
+**Archive Message**
+
+This is a function for archive message by chat id
+
+```js
+addToArchive("receiver-number@c.us"); // asynchronous function
+```
+
+**Remove Message From Archive**
+
+This is a function for remove message from archive by chat id
+
+```js
+removeFromArchive("receiver-number@c.us"); // asynchronous function
+```
+
 **Get Contacts**
 
 This is a function to get all contacts
 
 ```js
 getContacts(); // asynchronous function
+```
+
+**Get Labels**
+
+This is a function to get all labels
+
+```js
+getLabels(); // asynchronous function
+```
+
+**Get Chat By Label**
+
+This is a function to get chat by label id
+
+```js
+getChatsByLabel("labelId"); // asynchronous function
+```
+
+**Get All Blocked Contacts**
+
+This is a function to get all of blocked contacts
+
+```js
+getBlocked()(); // asynchronous function
 ```
 
 ## 🖼 Send as Sticker
@@ -232,7 +282,6 @@ client.connect({
   headless: true,
   authState: {
     isAuth: true,
-    authType: "multidevice",
     authId: "example_account",
   },
 });
@@ -266,7 +315,6 @@ client.connect({
   headless: true,
   authState: {
     isAuth: true,
-    authType: "multidevice",
     authId: "example_account",
   },
 });
@@ -301,7 +349,6 @@ client.connect({
   headless: true,
   authState: {
     isAuth: true,
-    authType: "multidevice",
     authId: "example_account",
   },
 });

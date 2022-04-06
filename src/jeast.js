@@ -128,6 +128,17 @@ class Jeast extends EventEmitter {
         });
       },
 
+      /**
+       * Events Emitter
+       * @param {Function} callback New message action will passed with callback events
+       * @returns {EventEmitter} This action return the events that has been assigned with parameter
+       */
+      newMessage: (callback) => {
+        this.on(Events.MESSAGE_CREATE, async (typing) => {
+          callback(typing);
+        });
+      },
+
       group: {
         /**
          * Events Emitter
@@ -171,17 +182,6 @@ class Jeast extends EventEmitter {
       changeState: (callback) => {
         this.on(Events.STATE_CHANGED, async (state) => {
           callback(state);
-        });
-      },
-
-      /**
-       * Events Emitter
-       * @param {Function} callback New message action will passed with callback events
-       * @returns {EventEmitter} This action return the events that has been assigned with parameter
-       */
-      newMessage: (callback) => {
-        this.on(Events.MESSAGE_CREATE, async (typing) => {
-          callback(typing);
         });
       },
     };
