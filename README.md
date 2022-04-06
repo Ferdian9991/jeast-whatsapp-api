@@ -5,7 +5,7 @@
 		src="https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/public/jeast-logo.png">
 </h1>
 
-[![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
+[![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![Jeast_Whatsapp_Api-1.1.1](https://img.shields.io/badge/Jeast_Whatsapp_Api-1.1.1-brightgreen.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
 
 # Jeast Whatsapp API
 
