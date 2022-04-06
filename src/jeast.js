@@ -42,7 +42,7 @@ class Jeast extends EventEmitter {
     this.ev = {
       /**
        * Events Emitter
-       * @param {Function} callback QR will passed with callbacck events
+       * @param {Function} callback QR will passed with callback events
        * @returns {EventEmitter} QR will return the events that has been assigned with parameter
        */
       qr: (callback) => {
@@ -53,7 +53,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Connection will passed with callbacck events
+       * @param {Function} callback Connection will passed with callback events
        * @returns {EventEmitter} Connection will return the events that has been assigned with parameter
        */
       connection: (callback) => {
@@ -64,7 +64,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Message will passed with callbacck events
+       * @param {Function} callback Message will passed with callback events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       message: (callback) => {
@@ -75,7 +75,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Revoke me message will passed with callbacck events
+       * @param {Function} callback Revoke me message will passed with callback events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       revokeMe: (callback) => {
@@ -86,7 +86,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Revoke all message will passed with callbacck events
+       * @param {Function} callback Revoke all message will passed with callback events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       revokeAll: (callback) => {
@@ -97,7 +97,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Upload media message will passed with callbacck events
+       * @param {Function} callback Upload media message will passed with callback events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       uploadMedia: (callback) => {
@@ -108,7 +108,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Incoming call event will passed with callbacck events
+       * @param {Function} callback Incoming call event will passed with callback events
        * @returns {EventEmitter} Incoming call return the events that has been assigned with parameter
        */
       incomingCall: (callback) => {
@@ -119,7 +119,7 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback Message Ack message will passed with callbacck events
+       * @param {Function} callback Message Ack message will passed with callback events
        * @returns {EventEmitter} Message will return the events that has been assigned with parameter
        */
       ackMessage: (callback) => {
@@ -131,7 +131,7 @@ class Jeast extends EventEmitter {
       group: {
         /**
          * Events Emitter
-         * @param {Function} callback Group join action will passed with callbacck events
+         * @param {Function} callback Group join action will passed with callback events
          * @returns {EventEmitter} Group join action return the events that has been assigned with parameter
          */
         join: (callback) => {
@@ -142,7 +142,7 @@ class Jeast extends EventEmitter {
 
         /**
          * Events Emitter
-         * @param {Function} callback Group leave action will passed with callbacck events
+         * @param {Function} callback Group leave action will passed with callback events
          * @returns {EventEmitter} Group leave action return the events that has been assigned with parameter
          */
         leave: (callback) => {
@@ -153,7 +153,7 @@ class Jeast extends EventEmitter {
 
         /**
          * Events Emitter
-         * @param {Function} callback Group update action will passed with callbacck events
+         * @param {Function} callback Group update action will passed with callback events
          * @returns {EventEmitter} Group update action return the events that has been assigned with parameter
          */
         update: (callback) => {
@@ -165,12 +165,23 @@ class Jeast extends EventEmitter {
 
       /**
        * Events Emitter
-       * @param {Function} callback State update action will passed with callbacck events
+       * @param {Function} callback State update action will passed with callback events
        * @returns {EventEmitter} State update action return the events that has been assigned with parameter
        */
       changeState: (callback) => {
         this.on(Events.STATE_CHANGED, async (state) => {
           callback(state);
+        });
+      },
+
+      /**
+       * Events Emitter
+       * @param {Function} callback New message action will passed with callback events
+       * @returns {EventEmitter} This action return the events that has been assigned with parameter
+       */
+      newMessage: (callback) => {
+        this.on(Events.MESSAGE_CREATE, async (typing) => {
+          callback(typing);
         });
       },
     };
@@ -1161,6 +1172,15 @@ class Jeast extends EventEmitter {
    */
   async registeredId(id) {
     return Boolean(await this.getPhoneId(id));
+  }
+
+  /**
+   * Will give a delay effect on every action
+   * @param {string} time
+   * @returns {Promise}
+   */
+  async delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
   }
 }
 
