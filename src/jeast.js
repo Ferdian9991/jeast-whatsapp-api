@@ -1005,9 +1005,9 @@ class Jeast extends EventEmitter {
       if (chat.pin) {
         return true;
       }
-      const MAX_PIN_COUNT = 3;
-      if (window.Store.Chat.models.length > MAX_PIN_COUNT) {
-        let maxPinned = window.Store.Chat.models[MAX_PIN_COUNT - 1].pin;
+      const max_pin = 3;
+      if (window.Store.Chat.models.length > max_pin) {
+        let maxPinned = window.Store.Chat.models[max_pin - 1].pin;
         if (maxPinned) {
           return false;
         }

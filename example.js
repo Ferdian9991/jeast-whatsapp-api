@@ -41,5 +41,9 @@ client.ev.message(async (message) => {
     await client.sendMessage(message.id.remote, mp, {
       sendAudioAsVoice: true,
     });
+  } else if ("pin") {
+    await client.pinChatById(message.id.remote);
+  } else if ("unpin") {
+    await client.unpinChatById(message.id.remote);
   }
 });

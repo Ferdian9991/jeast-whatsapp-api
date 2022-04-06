@@ -69,16 +69,28 @@ const { Jeast } = require("jeast-whatsapp-api");
 
 const client = new Jeast();
 
-client.ev.qr(callback); //Event listener to get or print qr code
-client.ev.connection(callback); //Event listener that which will be called when connected or authenticated
-client.ev.message(callback); //Event listener that which will be called when some peoples send message
-client.ev.revokeMe(callback); //Event listener that which will be called when some peoples revoke to you
-client.ev.revokeAll(callback); //Event listener that which will be called when revoke all related to you
-client.ev.uploadMedia(callback); //Event listener that will be called if you are sending a message
-client.ev.incomingCall(callback); //Event listener will be called when someone calls you with whatsapp
-client.ev.group.join(callback); //Event listener will be called when someone invite you on group
-client.ev.group.leave(callback); //Event listener will be called when someone remove you from group
-client.ev.group.update(callback); //Event listener will be called when someone update same group as you
+client.ev.qr(callback);
+//Event listener to get or print qr code
+client.ev.changeState(callback);
+//Event listener that which will be called if state has been changed
+client.ev.connection(callback);
+//Event listener that which will be called when connected or authenticated
+client.ev.message(callback);
+//Event listener that which will be called when some peoples send message
+client.ev.revokeMe(callback);
+//Event listener that which will be called when some peoples revoke to you
+client.ev.revokeAll(callback);
+//Event listener that which will be called when revoke all related to you
+client.ev.uploadMedia(callback);
+//Event listener that will be called if you are sending a message
+client.ev.incomingCall(callback);
+//Event listener will be called when someone calls you with whatsapp
+client.ev.group.join(callback);
+//Event listener will be called when someone invite you on group
+client.ev.group.leave(callback);
+//Event listener will be called when someone remove you from group
+client.ev.group.update(callback);
+//Event listener will be called when someone update same group as you
 ```
 
 **Sending Message**
@@ -103,6 +115,39 @@ This is a function to get all chat list
 ```js
 getChats(); // asynchronous function
 ```
+
+**Pin Chat By Id**
+
+This is a function to pin chat using specified id
+
+```js
+pinChatById("receiver-number@c.us"); // asynchronous function
+```
+
+**Unin Chat By Id**
+
+This is a function to unpin chat using specified id
+
+```js
+unpinChatById("receiver-number@c.us"); // asynchronous function
+```
+
+**Mute Chat**
+
+This is a function to mute chat
+
+```js
+muteChat("receiver-number@c.us"); // asynchronous function
+```
+
+**Mark Chat as Unread**
+
+This is a function to mark as unread chat
+
+```js
+markChatAsUnread("receiver-number@c.us"); // asynchronous function
+```
+
 
 **Logout**
 

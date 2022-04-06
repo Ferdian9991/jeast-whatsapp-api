@@ -61,7 +61,7 @@ class MessageMedia {
 
     if (!mimetype && !options.unsafeMime)
       throw new Error(
-        "Unable to determine MIME type using URL. Set unsafeMime to true to download it anyway."
+        "Set unsafeMime to true to download it anyway."
       );
 
     async function fetchData(url, options) {
