@@ -1,6 +1,7 @@
 .eslintrc.json
 .jsdoc.json
 .editorconfig
+example.js
 
 logs
 *.log
@@ -11,5 +12,5 @@ yarn-error.log*
 session/
 
 .env
-tools/
+public/
 tests/

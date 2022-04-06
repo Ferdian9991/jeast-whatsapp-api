@@ -1,10 +1,5 @@
-const config = require("./src/jeast-utils/config");
-
 module.exports = {
   Jeast: require("./src/jeast"),
-
-  version: require("./package.json").version,
-
   ClientInfo: require("./src/jeast-models/client-info.jeast"),
   Location: require("./src/jeast-models/location.jeast"),
   Message: require("./src/jeast-models/message.jeast"),
@@ -18,5 +13,4 @@ module.exports = {
   GroupChat: require("./src/jeast-models/group-chat.jeast"),
   PrivateChat: require("./src/jeast-models/private-chat.jeast"),
   Chat: require("./src/jeast-models/chat.jeast"),
-  ...config,
 };
