@@ -1153,6 +1153,15 @@ class Jeast extends EventEmitter {
       await window.Store.Cmd.markChatUnread(chat, true);
     }, chatId);
   }
+
+  /**
+   * Check if id already registered on whatsapp
+   * @param {string} id the whatsapp user ID
+   * @returns {Promise<Boolean>}
+   */
+  async registeredId(id) {
+    return Boolean(await this.getPhoneId(id));
+  }
 }
 
 module.exports = Jeast;
