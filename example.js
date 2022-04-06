@@ -61,6 +61,12 @@ client.ev.message(async (message) => {
       const blockContacts = await client.getBlocked();
       console.log(blockContacts);
       break;
+    case "archive my chat":
+      await client.addToArchive(message.id.remote);
+      break;
+    case "unarchive my chat":
+      await client.removeFromArchive(message.id.remote);
+      break;
     default:
       await client.sendMessage(message.id.remote, "Hi!, can i help you?");
   }

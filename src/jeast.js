@@ -774,6 +774,30 @@ class Jeast extends EventEmitter {
   }
 
   /**
+   * This actions will return boolean
+   * @returns {Promise<boolean>}
+   */
+  async addToArchive(chatId) {
+    return await this.clientPage.evaluate(async (chatId) => {
+      let chat = await window.Store.Chat.get(chatId);
+      await window.Store.Cmd.archiveChat(chat, true);
+      return true;
+    }, chatId);
+  }
+
+  /**
+   * This actions will return boolean
+   * @returns {Promise<boolean>}
+   */
+  async removeFromArchive(chatId) {
+    return await this.clientPage.evaluate(async (chatId) => {
+      let chat = await window.Store.Chat.get(chatId);
+      await window.Store.Cmd.archiveChat(chat, false);
+      return false;
+    }, chatId);
+  }
+
+  /**
    * Gets the current connection state for the client
    * @returns {ConnWAState}
    */
