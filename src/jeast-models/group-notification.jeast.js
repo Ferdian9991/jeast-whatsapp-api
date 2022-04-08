@@ -1,4 +1,8 @@
 const Main = require("./main.jeast");
+const Chat = require("./chat.jeast");
+const Contact = require("./contact.jeast");
+const MessageMedia = require("./message-media.jeast");
+const Message = require("./message.jeast");
 
 /**
  * Represents a GroupNotification on WhatsApp
@@ -26,7 +30,7 @@ class GroupNotification extends Main {
 
     /**
      * GroupNotification type
-     * @type {GroupNotificationTypes}
+     * @type {Object}
      */
     this.type = data.subtype;
 

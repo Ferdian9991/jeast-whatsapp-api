@@ -3,7 +3,7 @@ const Chat = require("./chat.jeast");
 /**
  * Participant information
  * @typedef {Object} GroupParticipant
- * @property {ContactId} id
+ * @property {string} id
  * @property {boolean} isAdmin
  * @property {boolean} isSuperAdmin
  */
@@ -21,7 +21,7 @@ class GroupChat extends Chat {
 
   /**
    * Gets the group owner
-   * @type {ContactId}
+   * @type {string}
    */
   get owner() {
     return this.groupMetadata.owner;
@@ -29,7 +29,7 @@ class GroupChat extends Chat {
 
   /**
    * Gets the date at which the group was created
-   * @type {date}
+   * @type {new Date()}
    */
   get createdAt() {
     return new Date(this.groupMetadata.creation * 1000);

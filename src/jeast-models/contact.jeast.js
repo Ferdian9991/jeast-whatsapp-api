@@ -1,4 +1,5 @@
 const Main = require("./main.jeast");
+const Chat = require("./chat.jeast");
 
 /**
  * ID that represents a contact
@@ -192,7 +193,7 @@ class Contact extends Main {
 
   /**
    * Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
-   * @returns {Promise<JWeb.ChatId[]>}
+   * @returns {Promise<Object[]>}
    */
   async getCommonGroups() {
     return await this.client.getCommonGroups(this.id._serialized);

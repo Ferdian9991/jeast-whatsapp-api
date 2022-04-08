@@ -1,5 +1,8 @@
 const Main = require("./main.jeast");
 const Message = require("./message.jeast");
+const MessageMedia = require("./message-media.jeast");
+const Contact = require("./contact.jeast");
+const Label = require("./label.jeast");
 
 /**
  * Represents a Chat on WhatsApp
@@ -79,7 +82,7 @@ class Chat extends Main {
   /**
    * Send a message to this chat
    * @param {string|MessageMedia|Location} content
-   * @param {MessageSendOptions} [options]
+   * @param {Object} [options]
    * @returns {Promise<Message>} Message that was just sent
    */
   async sendMessage(content, options) {

@@ -3,6 +3,8 @@ const MessageMedia = require("./message-media.jeast");
 const Location = require("./location.jeast");
 const Order = require("./order.jeast");
 const Payment = require("./payment.jeast");
+const Chat = require("./chat.jeast");
+const Contact = require("./contact.jeast");
 const { MessageTypes } = require("../jeast-utils/config");
 
 /**
@@ -33,7 +35,7 @@ class Message extends Main {
 
     /**
      * ACK status for the message
-     * @type {MessageAck}
+     * @type {string}
      */
     this.ack = data.ack;
 
