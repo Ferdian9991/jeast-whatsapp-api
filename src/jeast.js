@@ -810,7 +810,7 @@ class Jeast extends EventEmitter {
 
   /**
    * Gets the current connection state for the client
-   * @returns {ConnWAState}
+   * @returns {Promise<ConnWAState>}
    */
   async getState() {
     return await this.clientPage.evaluate(() => {

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const sinon = require("sinon");
 const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
@@ -87,6 +88,36 @@ describe("Jeast Function", function () {
     } else {
       const allLabels = await client.getLabels();
       expect(allLabels).to.be.an("array");
+    }
+
+    await client.destroy();
+  });
+
+  it("Send message by ID", async function () {
+    this.timeout(30000);
+    const connCallback = sinon.spy();
+    const client = new Jeast();
+    client.connect({
+      logger: false,
+      headless: true,
+      authState: {
+        isAuth: true,
+        authId: "example_account",
+      },
+    });
+
+    client.ev.connection(connCallback);
+
+    await sleep(26000);
+
+    if (!connCallback.args[0][0].isConnected) {
+      expect.fail("Process fail with no session provided!!");
+    } else {
+      const sendMessage = await client.sendMessage(
+        process.env.RECV_NUMBER,
+        "Good night!, what are you doing?"
+      );
+      expect(sendMessage)
     }
 
     await client.destroy();

@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@pedroslopez/moduleraid": "^5.0.2",
+    "dotenv": "^16.0.0",
     "events": "^3.3.0",
     "fluent-ffmpeg": "^2.1.2",
     "mime": "^3.0.0",
