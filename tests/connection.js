@@ -88,6 +88,8 @@ describe("Jeast Client", function () {
 
       expect(qrCall.called).equal(true);
       expect(connectionCall.called).equal(true);
+
+      await client.destroy();
     });
   });
 });
