@@ -5,7 +5,7 @@
 		src="https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/public/jeast-logo.png">
 </h1>
 
-[![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![Jeast_Whatsapp_Api-1.1.1](https://img.shields.io/badge/Jeast_Whatsapp_Api-1.1.1-brightgreen.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
+[![npm](https://img.shields.io/npm/v/jeast-whatsapp-api.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![license](https://img.shields.io/github/license/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api/blob/main/LICENSE) [![Jeast_Whatsapp_Api-1.1.1](https://img.shields.io/badge/Jeast_Whatsapp_Api-1.1.3-blue.svg)](https://www.npmjs.com/package/jeast-whatsapp-api) [![stars](https://img.shields.io/github/stars/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api) [![stars](https://img.shields.io/github/forks/Ferdian9991/jeast-whatsapp-api)](https://github.com/Ferdian9991/jeast-whatsapp-api)
 
 # Jeast Whatsapp API
 
@@ -69,7 +69,7 @@ client.ev.message(async (message) => {
 
 Jeast Whatsapp API has various functions, there are several functions that are not tied to existing events, so we will provide documentation of these functions below
 
-**Events Listeners**
+**📹 Events Listeners**
 
 This is a some event listener that return a callback
 
@@ -104,7 +104,7 @@ client.ev.group.update(callback);
 //Event listener will be called when someone update same group as you
 ```
 
-**Sending Message**
+**💬 Sending Message**
 
 This is a function to send a message
 
@@ -119,7 +119,7 @@ const options = {
 sendMessage("receiver-number@.c.us", "message", options); // asynchronous function
 ```
 
-**Get Chat List**
+**📨 Get Chat List**
 
 This is a function to get all chat list
 
@@ -127,7 +127,7 @@ This is a function to get all chat list
 getChats(); // asynchronous function
 ```
 
-**Pin Chat By Id**
+**📌 Pin Chat By Id**
 
 This is a function to pin chat using specified id
 
@@ -135,7 +135,7 @@ This is a function to pin chat using specified id
 pinChatById("receiver-number@c.us"); // asynchronous function
 ```
 
-**Unin Chat By Id**
+**📌 Unpin Chat By Id**
 
 This is a function to unpin chat using specified id
 
@@ -143,7 +143,7 @@ This is a function to unpin chat using specified id
 unpinChatById("receiver-number@c.us"); // asynchronous function
 ```
 
-**Mute Chat**
+**🔇 Mute Chat**
 
 This is a function to mute chat
 
@@ -151,7 +151,7 @@ This is a function to mute chat
 muteChat("receiver-number@c.us"); // asynchronous function
 ```
 
-**Mark Chat as Unread**
+**📤 Mark Chat as Unread**
 
 This is a function to mark as unread chat
 
@@ -159,7 +159,7 @@ This is a function to mark as unread chat
 markChatAsUnread("receiver-number@c.us"); // asynchronous function
 ```
 
-**Logout**
+**🚪 Logout**
 
 This is a function to logout from the whatsapp web
 
@@ -167,7 +167,7 @@ This is a function to logout from the whatsapp web
 logout(); // asynchronous function
 ```
 
-**Search Messages**
+**🔎 Search Messages**
 
 This is a function to search messages with query type string
 
@@ -181,7 +181,7 @@ This is a function to search messages with query type string
   searchMessages(query = 'string', options); // asynchronous function
 ```
 
-**Send Seen**
+**👀 Send Seen**
 
 This is a function to send message seen
 
@@ -189,7 +189,7 @@ This is a function to send message seen
 sendMessageSeen("receiver-number@c.us"); // asynchronous function
 ```
 
-**Get Chat By Id**
+**📩 Get Chat By Id**
 
 This is a function to get chat using chat id
 
@@ -197,7 +197,7 @@ This is a function to get chat using chat id
 getChatById("receiver-number@c.us"); // asynchronous function
 ```
 
-**Get Phone Country Code**
+**🔢 Get Phone Country Code**
 
 This is a function to get chat using chat id
 
@@ -205,7 +205,7 @@ This is a function to get chat using chat id
 getPhoneCountry("phone-number"); // asynchronous function
 ```
 
-**Create New Group**
+**🏫 Create New Group**
 
 This is a function to create new group and add some participants
 
@@ -213,7 +213,7 @@ This is a function to create new group and add some participants
 createNewGroup("Test", ["List of participant number id"]); // asynchronous function
 ```
 
-**Get Whatsapp Version**
+**📟 Get Whatsapp Version**
 
 This is a function to get whatsapp version
 
@@ -221,7 +221,7 @@ This is a function to get whatsapp version
 getWAVersion(); // asynchronous function
 ```
 
-**Archive Message**
+**🗄️ Archive Message**
 
 This is a function for archive message by chat id
 
@@ -229,7 +229,7 @@ This is a function for archive message by chat id
 addToArchive("receiver-number@c.us"); // asynchronous function
 ```
 
-**Remove Message From Archive**
+**❌🗄️ Remove Message From Archive**
 
 This is a function for remove message from archive by chat id
 
@@ -237,7 +237,7 @@ This is a function for remove message from archive by chat id
 removeFromArchive("receiver-number@c.us"); // asynchronous function
 ```
 
-**Get Contacts**
+**📠 Get Contacts**
 
 This is a function to get all contacts
 
@@ -245,7 +245,7 @@ This is a function to get all contacts
 getContacts(); // asynchronous function
 ```
 
-**Get Labels**
+**🏷️ Get Labels**
 
 This is a function to get all labels
 
@@ -253,7 +253,7 @@ This is a function to get all labels
 getLabels(); // asynchronous function
 ```
 
-**Get Chat By Label**
+**🏷️ Get Chat By Label**
 
 This is a function to get chat by label id
 
@@ -261,7 +261,7 @@ This is a function to get chat by label id
 getChatsByLabel("labelId"); // asynchronous function
 ```
 
-**Get All Blocked Contacts**
+**📠 Get All Blocked Contacts**
 
 This is a function to get all of blocked contacts
 

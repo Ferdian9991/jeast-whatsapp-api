@@ -7,6 +7,7 @@
   "homepage": "https://github.com/Ferdian9991/jeast-whatsapp-api",
   "scripts": {
     "test": "mocha tests --recursive --timeout 7000",
+    "build:types": "tsc *.js --declaration --allowJs --emitDeclarationOnly --outDir types",
     "example": "node example.js"
   },
   "repository": {
