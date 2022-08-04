@@ -58,7 +58,9 @@ exports.ExposeStore = (moduleRaidStr) => {
   window.Store.Wap = window.mR.findModule("queryLinkPreview")[0].default;
   window.Store.WidFactory = window.mR.findModule("createWid")[0];
   window.Store.ProfilePic = window.mR.findModule("profilePicResync")[0];
-  window.Store.PresenceStatus = window.mR.findModule("sendPresenceAvailable")[0];
+  window.Store.PresenceStatus = window.mR.findModule(
+    "sendPresenceAvailable"
+  )[0];
   window.Store.ChatState = window.mR.findModule("sendChatStateComposing")[0];
   window.Store.GroupParticipants = window.mR.findModule(
     "sendPromoteParticipants"
@@ -120,7 +122,6 @@ exports.LoadModule = () => {
       delete options.attachment;
       delete options.sendMediaAsSticker;
     }
-
     let quotedMsgOptions = {};
     if (options.quotedMessageId) {
       let quotedMessage = window.Store.Msg.get(options.quotedMessageId);
@@ -193,7 +194,7 @@ exports.LoadModule = () => {
       delete options.linkPreview;
 
       // Not supported yet by WhatsApp Web on MD
-      if (!window.Store.Features.features.MD_BACKEND) {
+      if (!window.Store.MDBackend) {
         const link = window.Store.Validators.findLink(content);
         if (link) {
           const preview = await window.Store.Wap.queryLinkPreview(link.url);
@@ -248,7 +249,7 @@ exports.LoadModule = () => {
     }
 
     const meUser = window.Store.User.getMaybeMeUser();
-    const isMD = window.Store.Features.features.MD_BACKEND;
+    const isMD = window.Store.MDBackend;
 
     const newMsgId = new window.Store.MsgKey({
       from: meUser,
