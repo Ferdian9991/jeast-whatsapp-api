@@ -34,7 +34,7 @@ const logger = (condition, message) => {
 };
 
 class Jeast extends EventEmitter {
-  constructor(clientPage, clientBrowser) {
+  constructor() {
     super();
     this.clientPage = null;
     this.clientBrowser = null;
